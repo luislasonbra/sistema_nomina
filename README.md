@@ -4,7 +4,7 @@ Sistema completo de gestión de nómina para empresas en República Dominicana, 
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 1. Descarga el archivo `nomina.html`
 2. Ábrelo en cualquier navegador moderno (Chrome, Firefox, Edge)
@@ -14,9 +14,9 @@ Sistema completo de gestión de nómina para empresas en República Dominicana, 
 
 ---
 
-## 📦 Módulos del Sistema
+## Módulos del Sistema
 
-### 1. 👥 Empleados
+### 1. Empleados
 Gestión completa del personal de la empresa.
 
 | Funcionalidad | Detalle |
@@ -32,7 +32,7 @@ Gestión completa del personal de la empresa.
 
 ---
 
-### 2. 🏢 Departamentos
+### 2. Departamentos
 Organización de las áreas de la empresa.
 
 - Nombre, código y descripción
@@ -43,7 +43,7 @@ Organización de las áreas de la empresa.
 
 ---
 
-### 3. 💼 Cargos
+### 3. Cargos
 Catálogo de posiciones por departamento.
 
 - Nombre del cargo y nivel jerárquico (Operativo, Técnico, Supervisorio, Gerencial, Directivo)
@@ -55,7 +55,7 @@ Catálogo de posiciones por departamento.
 
 ---
 
-### 4. 📅 Períodos de Nómina
+### 4. Períodos de Nómina
 Control de los ciclos de pago.
 
 - Tipos: Mensual, Quincenal, Semanal
@@ -67,7 +67,7 @@ Control de los ciclos de pago.
 
 ---
 
-### 5. 💰 Nómina
+### 5. Nómina
 Módulo central de cálculo y procesamiento de pagos.
 
 #### Pestaña: Procesar Nómina
@@ -88,7 +88,7 @@ Módulo central de cálculo y procesamiento de pagos.
 
 ---
 
-### 6. ➖ Deducciones (Tipos Generales)
+### 6. Deducciones (Tipos Generales)
 Catálogo de deducciones que aplican a la nómina.
 
 | Deducción | Tipo | Valor por defecto |
@@ -106,7 +106,7 @@ Catálogo de deducciones que aplican a la nómina.
 
 ---
 
-### 7. 👤 Deducciones por Empleado *(módulo individual)*
+### 7. Deducciones por Empleado *(módulo individual)*
 Asignación de descuentos específicos por persona.
 
 Este módulo resuelve el caso en que **no todos los empleados tienen los mismos descuentos**: préstamos, embargos, cooperativas, seguros voluntarios, etc.
@@ -130,7 +130,7 @@ Este módulo resuelve el caso en que **no todos los empleados tienen los mismos 
 
 ---
 
-### 8. 📊 Reportes
+### 8. Reportes
 Vistas analíticas del estado de la nómina.
 
 | Reporte | Contenido |
@@ -141,7 +141,7 @@ Vistas analíticas del estado de la nómina.
 
 ---
 
-## 🧮 Cálculo del ISR (Impuesto sobre la Renta)
+## Cálculo del ISR (Impuesto sobre la Renta)
 
 El sistema aplica la escala progresiva vigente en República Dominicana:
 
@@ -156,7 +156,7 @@ El ISR se calcula anualizado y se divide entre 12 para el descuento mensual.
 
 ---
 
-## 🗃️ Almacenamiento de Datos
+## Almacenamiento de Datos
 
 Toda la información se almacena en el `localStorage` del navegador bajo la clave `payroll_db`.
 
@@ -168,11 +168,11 @@ localStorage['payroll_db'] = {
 }
 ```
 
-> ⚠️ Los datos son locales al navegador y dispositivo. Para respaldo, exporta el contenido del `localStorage` manualmente o agrega un módulo de exportación a JSON/Excel según necesidad.
+> Los datos son locales al navegador y dispositivo. Para respaldo, exporta el contenido del `localStorage` manualmente o agrega un módulo de exportación a JSON/Excel según necesidad.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 | Tecnología | Versión | Uso |
 |---|---|---|
@@ -188,7 +188,7 @@ Sin dependencias de backend. Sin base de datos externa. Sin frameworks JS.
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 nomina.html          ← Archivo único, todo incluido
@@ -197,7 +197,7 @@ README.md            ← Este documento
 
 ---
 
-## ✅ Requisitos
+## Requisitos
 
 - Navegador moderno con soporte para ES6+ y localStorage
 - Conexión a internet solo en la primera carga (para cargar Bootstrap y fuentes desde CDN)
@@ -205,7 +205,7 @@ README.md            ← Este documento
 
 ---
 
-## 📌 Datos de Ejemplo Precargados
+## Datos de Ejemplo Precargados
 
 Al iniciar por primera vez el sistema carga automáticamente:
 
@@ -217,6 +217,6 @@ Al iniciar por primera vez el sistema carga automáticamente:
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Uso libre para fines educativos y empresariales internos.
