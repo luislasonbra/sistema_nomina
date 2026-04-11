@@ -1,0 +1,108 @@
+classDiagram
+    class Departamento {
+        +int id
+        +string nombre
+        +string codigo
+        +string descripcion
+        +datetime creado_en
+        +consultarEmpleados()
+    }
+
+    class Cargo {
+        +int id
+        +string nombre
+        +int dept_id
+        +string nivel
+        +float sal_base
+        +float sal_max
+        +datetime creado_en
+    }
+
+    class Empleado {
+        +int id
+        +string nombres
+        +string apellidos
+        +string cedula
+        +string telefono
+        +string email
+        +date ingreso
+        +int dept_id
+        +int cargo_id
+        +string tipo
+        +float salario
+        +string estado
+        +datetime creado_en
+        +calcularSalarioNeto()
+    }
+
+    class TipoDeduccion {
+        +int id
+        +string nombre
+        +string tipo
+        +float valor
+        +string aplica
+        +string obligatoria
+        +datetime creado_en
+    }
+
+    class DescuentoEmpleado {
+        +int id
+        +int emp_id
+        +int tipo_id
+        +string nombre
+        +string tipo_val
+        +float valor
+        +date inicio
+        +date fin
+        +int cuotas
+        +string activo
+        +string obs
+        +datetime creado_en
+        +calcularMontoDeduccion()
+    }
+
+    class Periodo {
+        +int id
+        +string nombre
+        +string tipo
+        +date inicio
+        +date fin
+        +int dias
+        +string estado
+        +datetime creado_en
+    }
+
+    class Nomina {
+        +int id
+        +int periodo_id
+        +int total_emps
+        +float total_bruto
+        +float total_neto
+        +date fecha_proc
+        +string estado
+        +datetime creado_en
+        +procesar()
+    }
+
+    class NominaDetalle {
+        +int id
+        +int nomina_id
+        +int emp_id
+        +float salario_base
+        +int dias
+        +float sal_calculado
+        +float bonificacion
+        +float desc_oblig
+        +float desc_indiv
+        +float total_desc
+        +float salario_neto
+    }
+
+    Departamento "1" -- "0..*" Empleado : tiene
+    Departamento "1" -- "0..*" Cargo : contiene
+    Cargo "1" -- "0..*" Empleado : ocupa
+    Empleado "1" -- "0..*" DescuentoEmpleado : tiene
+    TipoDeduccion "1" -- "0..*" DescuentoEmpleado : categoriza
+    Periodo "1" -- "1..*" Nomina : genera
+    Nomina "1" -- "1..*" NominaDetalle : contiene
+    Empleado "1" -- "0..*" NominaDetalle : registrado_en

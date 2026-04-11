@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Nómina RD</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1117;--paper:#f4f1eb;--cream:#eae6dc;--white:#fff;--accent:#c0392b;--accent2:#1a6fc4;--gold:#b8960c;--green:#1a7a4a;--muted:#7a7568;--border:#d8d3c8;--sw:250px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);}
+h1,h2,h3,h4,h5,h6,.ff{font-family:'Syne',sans-serif;}
+/* sidebar */
+#sb{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--ink);color:#ccc;z-index:1040;display:flex;flex-direction:column;overflow-y:auto;transition:transform .25s;}
+#sb.hide{transform:translateX(-100%);}
+.sb-brand{padding:22px 20px 16px;border-bottom:1px solid #1e2028;}
+.sb-brand .logo{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;}
+.sb-brand .logo em{color:var(--accent);font-style:normal;}
+.sb-brand small{display:block;font-size:.68rem;color:#555;margin-top:2px;}
+.sb-nav{flex:1;padding:10px 0;}
+.sg{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3a3e4a;padding:12px 20px 4px;}
+.sl{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:.83rem;color:#aaa;border:none;background:none;width:100%;cursor:pointer;transition:background .15s,color .15s;}
+.sl i{font-size:.95rem;width:18px;text-align:center;}
+.sl .cnt{margin-left:auto;background:var(--accent);color:#fff;font-size:.62rem;padding:1px 7px;border-radius:20px;font-weight:700;}
+.sl:hover{background:#181c24;color:#fff;}
+.sl.on{background:rgba(192,57,43,.15);color:var(--accent);font-weight:600;}
+.sb-foot{padding:12px 20px;border-top:1px solid #1e2028;font-size:.72rem;color:#444;}
+/* topbar */
+#tb{position:sticky;top:0;z-index:1030;height:58px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+#tog{border:none;background:none;font-size:1.2rem;color:var(--ink);cursor:pointer;padding:5px;border-radius:6px;}
+#tog:hover{background:var(--cream);}
+#ptitle{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;flex:1;}
+.av{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;}
+/* layout */
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1039;}
+#ov.show{display:block;}
+#mw{margin-left:var(--sw);transition:margin-left .25s;display:flex;flex-direction:column;min-height:100vh;}
+#mw.full{margin-left:0;}
+.ca{padding:18px;flex:1;}
+/* cards */
+.kc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.ki{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;margin-bottom:10px;}
+.kv{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;}
+.kl{font-size:.74rem;color:var(--muted);margin-top:3px;}
+.kc.r .ki{background:rgba(192,57,43,.1);color:var(--accent);}
+.kc.b .ki{background:rgba(26,111,196,.1);color:var(--accent2);}
+.kc.g .ki{background:rgba(184,150,12,.1);color:var(--gold);}
+.kc.n .ki{background:rgba(26,122,74,.1);color:var(--green);}
+.box{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.bh{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.bh h6{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin:0;}
+.bb{padding:18px;}
+/* table */
+.table{margin:0;}
+.table thead th{background:var(--cream);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.table tbody td{padding:10px 12px;font-size:.83rem;vertical-align:middle;border-bottom:1px solid var(--border);}
+.table tbody tr:last-child td{border-bottom:none;}
+.table tbody tr:hover{background:var(--cream);}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+/* pills */
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.68rem;font-family:'Syne',sans-serif;font-weight:700;}
+.pg{background:rgba(26,122,74,.1);color:var(--green);}
+.pr{background:rgba(192,57,43,.1);color:var(--accent);}
+.py{background:rgba(184,150,12,.1);color:var(--gold);}
+.pb{background:rgba(26,111,196,.1);color:var(--accent2);}
+.pm{background:rgba(122,117,104,.1);color:var(--muted);}
+/* buttons */
+.bd{background:var(--ink);color:#fff;border:none;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:5px;}
+.bd:hover,.bd:disabled{opacity:.75;color:#fff;}
+.bd:disabled{cursor:not-allowed;}
+.ba{background:var(--accent);color:#fff;border:none;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:7px;cursor:pointer;transition:opacity .15s;display:inline-flex;align-items:center;gap:5px;}
+.ba:hover{opacity:.82;color:#fff;}
+.bg2{background:transparent;color:var(--ink);border:1.5px solid var(--border);font-family:'Syne',sans-serif;font-size:.8rem;font-weight:600;padding:6px 13px;border-radius:7px;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:5px;}
+.bg2:hover{background:var(--cream);color:var(--ink);}
+.ib{width:29px;height:29px;border-radius:6px;border:none;display:inline-flex;align-items:center;justify-content:center;font-size:.82rem;cursor:pointer;transition:background .15s;}
+.ie{background:rgba(26,111,196,.1);color:var(--accent2);}.ie:hover{background:rgba(26,111,196,.2);}
+.id{background:rgba(192,57,43,.1);color:var(--accent);}.id:hover{background:rgba(192,57,43,.2);}
+.iv{background:rgba(26,122,74,.1);color:var(--green);}.iv:hover{background:rgba(26,122,74,.2);}
+.ip{background:rgba(184,150,12,.1);color:var(--gold);}.ip:hover{background:rgba(184,150,12,.2);}
+/* forms */
+.form-control,.form-select{border:1.5px solid var(--border);border-radius:7px;font-size:.83rem;padding:7px 11px;background:var(--white);transition:border-color .15s,box-shadow .15s;}
+.form-control:focus,.form-select:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(15,17,23,.07);outline:none;}
+.form-label{font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;display:block;}
+/* modal */
+.modal-content{border-radius:13px;border:none;box-shadow:0 24px 60px rgba(0,0,0,.2);}
+.modal-header{background:var(--ink);color:#fff;border-radius:13px 13px 0 0;padding:16px 22px;border-bottom:none;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.modal-header .btn-close{filter:invert(1);opacity:.7;}
+.modal-body{padding:22px;}
+.modal-footer{padding:12px 22px;border-top:1px solid var(--border);}
+/* views */
+.vw{display:none;}.vw.on{display:block;}
+/* tabs */
+.tr{border-bottom:2px solid var(--border);display:flex;gap:2px;margin-bottom:18px;overflow-x:auto;}
+.tb2{border:none;background:none;padding:8px 14px 10px;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s,border-color .15s;}
+.tb2:hover{color:var(--ink);}.tb2.on{color:var(--ink);border-bottom-color:var(--accent);}
+.tp{display:none;}
+.tp.on{display:block;}
+/* misc */
+.sw{position:relative;}.sw i{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem;pointer-events:none;}.sw input{padding-left:30px;}
+.empty{text-align:center;padding:44px 20px;color:var(--muted);}.empty i{font-size:2.2rem;opacity:.22;display:block;margin-bottom:10px;}.empty p{font-size:.83rem;margin:0;}
+.hl{background:rgba(184,150,12,.07);border:1px solid rgba(184,150,12,.2);border-radius:8px;padding:10px 14px;}
+.dr{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:.83rem;}.dr:last-child{border-bottom:none;}
+.rw{background:var(--white);border:2px solid var(--ink);border-radius:11px;max-width:540px;padding:28px;}
+.rr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:.83rem;}.rr.tot{font-family:'Syne',sans-serif;font-weight:800;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
+.rs{font-family:'Syne',sans-serif;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:10px 0 3px;}
+#toast-a{position:fixed;bottom:22px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:7px;}
+.tm{background:var(--ink);color:#fff;border-radius:8px;padding:10px 16px;font-size:.83rem;display:flex;align-items:center;gap:8px;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:ti .22s ease;}
+.tm i{font-size:.95rem;}.tm.ok i{color:#4caf50;}.tm.er i{color:var(--accent);}
+@keyframes ti{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+/* loading */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* chart */
+.cw{display:flex;align-items:flex-end;gap:5px;height:90px;}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.bc .b{width:100%;border-radius:3px 3px 0 0;min-height:3px;background:var(--border);}
+.bc .b.on{background:var(--accent);}
+.bc .l{font-size:.6rem;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;}
+@media(max-width:991.98px){
+#sb{transform:translateX(-100%);}#sb.open{transform:translateX(0);}#mw{margin-left:0!important;}}
+@media(max-width:575.98px){.ca{padding:10px;}.rw{padding:16px;}}
+</style>
+</head>
+<body>
+<div id="ov" onclick="closeSb()"></div>
+
+<!-- SIDEBAR -->
+<nav id="sb">
+	<div class="sb-brand">
+		<div class="logo">Nómina<em>RD</em></div>
+		<small>Sistema de Nómina · República Dominicana</small>
+	</div>
+	<div class="sb-nav">
+		<div class="sg">Principal</div>
+		<button class="sl on" onclick="nav('dashboard',this)"><i class="bi bi-grid-fill"></i>Dashboard</button>
+		<button class="sl" onclick="nav('empleados',this)"><i class="bi bi-people-fill"></i>Empleados<span class="cnt" id="cnt-emp">…</span></button>
+		<div class="sg">Configuración</div>
+		<button class="sl" onclick="nav('departamentos',this)"><i class="bi bi-diagram-3-fill"></i>Departamentos</button>
+		<button class="sl" onclick="nav('cargos',this)"><i class="bi bi-briefcase-fill"></i>Cargos</button>
+		<button class="sl" onclick="nav('tipos',this)"><i class="bi bi-tags-fill"></i>Tipos de Deducción</button>
+		<div class="sg">Operaciones</div>
+		<button class="sl" onclick="nav('descuentos',this)"><i class="bi bi-person-dash-fill"></i>Descuentos x Empleado<span class="cnt" id="cnt-desc">…</span></button>
+		<button class="sl" onclick="nav('periodos',this)"><i class="bi bi-calendar3"></i>Períodos</button>
+		<button class="sl" onclick="nav('nomina',this)"><i class="bi bi-cash-stack"></i>Procesar Nómina</button>
+		<div class="sg">Análisis</div>
+		<button class="sl" onclick="nav('reportes',this)"><i class="bi bi-bar-chart-fill"></i>Reportes</button>
+	</div>
+	<div class="sb-foot"><span style="color:#aaa;font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700">Administrador</span><br>Recursos Humanos</div>
+</nav>
+
+<!-- MAIN -->
+<div id="mw">
+	<div id="tb">
+		<button id="tog" onclick="toggleSb()"><i class="bi bi-list"></i></button>
+		<span id="ptitle">Dashboard</span>
+		<span class="d-none d-md-block" style="font-size:.73rem;color:var(--muted)" id="tdate"></span>
+		<div class="av">AD</div>
+	</div>
+	<div class="ca">
+
+		<!-- DASHBOARD -->
+		<div class="vw on" id="vw-dashboard">
+			<div class="row g-3 mb-3">
+				<div class="col-6 col-xl-3"><div class="kc r"><div class="ki"><i class="bi bi-people-fill"></i></div><div class="kv" id="d-emp">…</div><div class="kl">Empleados Activos</div></div></div>
+				<div class="col-6 col-xl-3"><div class="kc b"><div class="ki"><i class="bi bi-cash-stack"></i></div><div class="kv" id="d-masa">…</div><div class="kl">Masa Salarial</div></div></div>
+				<div class="col-6 col-xl-3"><div class="kc g"><div class="ki"><i class="bi bi-diagram-3-fill"></i></div><div class="kv" id="d-dept">…</div><div class="kl">Departamentos</div></div></div>
+				<div class="col-6 col-xl-3"><div class="kc n"><div class="ki"><i class="bi bi-calendar-check-fill"></i></div><div class="kv" id="d-nom">…</div><div class="kl">Nóminas Procesadas</div></div></div>
+			</div>
+			<div class="row g-3">
+				<div class="col-lg-8"><div class="box"><div class="bh"><h6><i class="bi bi-people me-2" style="color:var(--accent)"></i>Empleados Recientes</h6><button class="bg2" onclick="navBtn('empleados')">Ver todos</button></div><div class="table-responsive"><table class="table"><thead><tr><th>Empleado</th><th>Salario</th><th class="d-none d-md-table-cell">Estado</th></tr></thead><tbody id="d-emp-tb"></tbody></table></div></div></div>
+				<div class="col-lg-4"><div class="box"><div class="bh"><h6><i class="bi bi-bar-chart me-2" style="color:var(--accent)"></i>Nómina / Mes</h6></div><div class="bb"><div class="cw" id="d-chart"></div></div></div></div>
+			</div>
+		</div>
+
+		<!-- EMPLEADOS -->
+		<div class="vw" id="vw-empleados">
+			<div class="box">
+				<div class="bh"><h6><i class="bi bi-people me-2" style="color:var(--accent)"></i>Empleados</h6>
+					<div class="d-flex gap-2 flex-wrap">
+						<div class="sw"><i class="bi bi-search"></i><input type="text" class="form-control" style="width:170px" placeholder="Buscar…" oninput="searchEmps(this.value)" id="eq"></div>
+						<button class="bd" onclick="openEmp()"><i class="bi bi-plus"></i>Nuevo</button>
+					</div>
+				</div>
+				<div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Nombre</th><th class="d-none d-md-table-cell">Cédula</th><th class="d-none d-lg-table-cell">Cargo</th><th>Salario</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="emp-tb"></tbody></table></div>
+				<div class="d-flex justify-content-between align-items-center px-3 py-2 border-top" style="font-size:.77rem;color:var(--muted)">
+					<span id="emp-lbl"></span><ul class="pagination pagination-sm mb-0" id="emp-pg"></ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- DEPARTAMENTOS -->
+		<div class="vw" id="vw-departamentos">
+			<div class="row g-3">
+				<div class="col-md-5"><div class="box"><div class="bh"><h6>Departamentos</h6><button class="bd" onclick="openDepto()"><i class="bi bi-plus"></i>Nuevo</button></div><div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Nombre</th><th>Cód.</th><th>Acc.</th></tr></thead><tbody id="dept-tb"></tbody></table></div></div></div>
+				<div class="col-md-7"><div class="box"><div class="bh"><h6>Detalle</h6></div><div class="bb" id="dept-det"><div class="empty"><i class="bi bi-diagram-3"></i><p>Selecciona un departamento</p></div></div></div></div>
+			</div>
+		</div>
+
+		<!-- CARGOS -->
+		<div class="vw" id="vw-cargos">
+			<div class="box"><div class="bh"><h6>Cargos</h6><button class="bd" onclick="openCargo()"><i class="bi bi-plus"></i>Nuevo Cargo</button></div>
+			<div class="table-responsive"><table class="table"><thead><tr><th>#</th><th>Cargo</th><th class="d-none d-md-table-cell">Depto.</th><th>Sal. Base</th><th class="d-none d-md-table-cell">Nivel</th><th>Acc.</th></tr></thead><tbody id="cargo-tb"></tbody></table></div></div>
+		</div>
+
+		<!-- TIPOS DEDUCCIÓN -->
+		<div class="vw" id="vw-tipos">
+			<div class="row g-3">
+				<div class="col-md-5"><div class="box"><div class="bh"><h6><i class="bi bi-tags me-2" style="color:var(--accent)"></i>Tipos de Deducción</h6><button class="bd" onclick="openTipo()"><i class="bi bi-plus"></i>Nuevo</button></div><div class="table-responsive"><table class="table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Valor</th><th>Oblig.</th><th>Acc.</th></tr></thead><tbody id="tipo-tb"></tbody></table></div></div></div>
+				<div class="col-md-7"><div class="box"><div class="bh"><h6>Calculadora</h6></div><div class="bb">
+					<div class="row g-3 mb-3">
+						<div class="col-sm-6"><label class="form-label">Salario Bruto</label><input type="number" class="form-control" id="cs" placeholder="0.00" oninput="calcDeds()"></div>
+						<div class="col-sm-6"><label class="form-label">Tipo Empleado</label><select class="form-select" id="ct" onchange="calcDeds()"><option value="fijo">Fijo</option><option value="por_hora">Por Hora</option></select></div>
+					</div><div id="co"></div>
+				</div></div></div>
+			</div>
+		</div>
+
+		<!-- DESCUENTOS POR EMPLEADO -->
+		<div class="vw" id="vw-descuentos">
+			<div class="row g-3">
+				<div class="col-md-4 col-lg-3">
+					<div class="box" style="position:sticky;top:70px">
+						<div class="bh"><h6>Empleados</h6></div>
+						<div class="px-2 py-2 border-bottom"><div class="sw"><i class="bi bi-search"></i><input type="text" class="form-control" placeholder="Buscar…" oninput="filterDescList(this.value)"></div></div>
+						<div id="desc-list" style="max-height:480px;overflow-y:auto"></div>
+					</div>
+				</div>
+				<div class="col-md-8 col-lg-9"><div id="desc-panel"><div class="box"><div class="bb"><div class="empty"><i class="bi bi-person-dash"></i><p>Selecciona un empleado para gestionar sus descuentos.</p></div></div></div></div></div>
+			</div>
+		</div>
+
+		<!-- PERÍODOS -->
+		<div class="vw" id="vw-periodos">
+			<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+				<h6 class="ff mb-0">Períodos de Nómina</h6>
+				<button class="bd" onclick="openPer()"><i class="bi bi-plus"></i>Nuevo Período</button>
+			</div>
+			<div class="row g-3" id="per-grid"></div>
+		</div>
+
+		<!-- NÓMINA -->
+		<div class="vw" id="vw-nomina">
+			<div class="tr">
+				<button class="tb2 on" onclick="swTab('nom','proc',this)">Procesar</button>
+				<button class="tb2" onclick="swTab('nom','hist',this)">Historial</button>
+				<button class="tb2" onclick="swTab('nom','rec',this)">Recibo de Pago</button>
+			</div>
+			<!-- procesar -->
+			<div class="tp on" id="nom-proc">
+				<div class="row g-3 mb-3">
+					<div class="col-sm-4"><label class="form-label">Período</label><select class="form-select" id="np"></select></div>
+					<div class="col-sm-4"><label class="form-label">Departamento</label><select class="form-select" id="nd"><option value="">Todos</option></select></div>
+					<div class="col-sm-4 d-flex align-items-end gap-2">
+						<button class="bd flex-fill" onclick="calcNomina()" id="btn-calc"><i class="bi bi-calculator"></i>Calcular</button>
+						<button class="ba" onclick="procesarNomina()" id="btn-proc"><i class="bi bi-check-all"></i>Procesar</button>
+					</div>
+				</div>
+				<div class="box"><div class="bh"><h6>Detalle de Cálculo</h6><small style="color:var(--muted)" id="np-lbl"></small></div>
+				<div class="table-responsive"><table class="table"><thead><tr><th>Empleado</th><th>Sal. Base</th><th class="d-none d-md-table-cell">Días</th><th>Calculado</th><th>Desc. Oblig.</th><th>Desc. Indiv.</th><th>Neto</th><th>Det.</th></tr></thead><tbody id="nom-tb"></tbody></table></div>
+				<div class="bb border-top"><div class="row g-2 text-center">
+					<div class="col-4"><small class="d-block" style="font-size:.7rem;color:var(--muted)">Bruto Total</small><strong class="ff" id="t-bruto">—</strong></div>
+					<div class="col-4"><small class="d-block" style="font-size:.7rem;color:var(--muted)">Desc. Total</small><strong class="ff" style="color:var(--accent)" id="t-desc">—</strong></div>
+					<div class="col-4"><small class="d-block" style="font-size:.7rem;color:var(--muted)">Neto Total</small><strong class="ff" style="color:var(--green)" id="t-neto">—</strong></div>
+				</div></div></div>
+			</div>
+			<!-- historial -->
+			<div class="tp" id="nom-hist">
+				<div class="box"><div class="bh"><h6>Historial de Nóminas Procesadas</h6></div>
+				<div class="table-responsive"><table class="table"><thead><tr><th>Período</th><th>Empleados</th><th>Bruto</th><th>Neto</th><th>Fecha</th><th>Estado</th></tr></thead><tbody id="hist-tb"></tbody></table></div></div>
+			</div>
+			<!-- recibo -->
+			<div class="tp" id="nom-rec">
+				<div class="row g-3 mb-3">
+					<div class="col-sm-4"><label class="form-label">Empleado</label><select class="form-select" id="re"></select></div>
+					<div class="col-sm-4"><label class="form-label">Período</label><select class="form-select" id="rp"></select></div>
+					<div class="col-sm-4 d-flex align-items-end gap-2">
+						<button class="bd" onclick="genRecibo()"><i class="bi bi-receipt"></i>Generar</button>
+						<button class="bg2" onclick="printRecibo()"><i class="bi bi-printer"></i>Imprimir</button>
+					</div>
+				</div>
+				<div id="rec-out"></div>
+			</div>
+		</div>
+
+		<!-- REPORTES -->
+		<div class="vw" id="vw-reportes">
+			<div class="tr">
+				<button class="tb2 on" onclick="swTab('rep','res',this)">Resumen</button>
+				<button class="tb2" onclick="swTab('rep','dept',this)">Por Depto.</button>
+				<button class="tb2" onclick="swTab('rep','emp',this)">Por Empleado</button>
+			</div>
+			<div class="tp on" id="rep-res"><div class="row g-3" id="rep-stats"></div></div>
+			<div class="tp" id="rep-dept">
+				<div class="box"><div class="bh"><h6>Nómina por Departamento</h6></div>
+				<div class="table-responsive"><table class="table"><thead><tr><th>Depto.</th><th>Emps.</th><th>Promedio</th><th>Total</th><th>%</th></tr></thead><tbody id="rdept-tb"></tbody></table></div></div>
+			</div>
+			<div class="tp" id="rep-emp">
+				<div class="box"><div class="bh"><h6>Por Empleado</h6>
+					<div class="sw"><i class="bi bi-search"></i><input type="text" class="form-control" style="width:170px" placeholder="Buscar…" oninput="filterRepEmp(this.value)"></div>
+				</div>
+				<div class="table-responsive"><table class="table"><thead><tr><th>Empleado</th><th class="d-none d-md-table-cell">Depto.</th><th>Salario</th><th>Desc. Oblig.</th><th>Desc. Indiv.</th><th>Neto</th></tr></thead><tbody id="remp-tb"></tbody></table></div></div>
+			</div>
+		</div>
+
+	</div><!-- /ca -->
+</div><!-- /mw -->
+
+<div id="toast-a"></div>
+
+<!-- ══════════ MODALS ══════════ -->
+<!-- Empleado -->
+<div class="modal fade" id="mEmp" tabindex="-1">
+	<div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mE-t">Nuevo Empleado</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="ei">
+			<div class="row g-3">
+				<div class="col-sm-6"><label class="form-label">Nombres *</label><input class="form-control" id="en" placeholder="Nombres"></div>
+				<div class="col-sm-6"><label class="form-label">Apellidos *</label><input class="form-control" id="ea" placeholder="Apellidos"></div>
+				<div class="col-sm-6"><label class="form-label">Cédula *</label><input class="form-control" id="ec" placeholder="000-0000000-0"></div>
+				<div class="col-sm-6"><label class="form-label">Teléfono</label><input class="form-control" id="et" placeholder="809-000-0000"></div>
+				<div class="col-sm-8"><label class="form-label">Email</label><input class="form-control" id="em" type="email" placeholder="correo@empresa.com"></div>
+				<div class="col-sm-4"><label class="form-label">Ingreso *</label><input class="form-control" id="ei2" type="date"></div>
+				<div class="col-sm-6"><label class="form-label">Departamento *</label><select class="form-select" id="ed" onchange="loadCargosModal()"><option value="">Seleccione…</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Cargo *</label><select class="form-select" id="eca"><option value="">Seleccione depto.</option></select></div>
+				<div class="col-sm-4"><label class="form-label">Tipo *</label><select class="form-select" id="eti"><option value="fijo">Fijo</option><option value="por_hora">Por Hora</option><option value="temporal">Temporal</option></select></div>
+				<div class="col-sm-4"><label class="form-label">Salario *</label><input class="form-control" id="es" type="number" placeholder="0.00"></div>
+				<div class="col-sm-4"><label class="form-label">Estado</label><select class="form-select" id="ee"><option value="activo">Activo</option><option value="inactivo">Inactivo</option><option value="suspendido">Suspendido</option></select></div>
+				<div class="col-12"><label class="form-label">Dirección</label><input class="form-control" id="edir" placeholder="Dirección completa"></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="saveEmp()"><i class="bi bi-check"></i>Guardar</button></div>
+	</div></div>
+</div>
+<!-- Departamento -->
+<div class="modal fade" id="mDept" tabindex="-1">
+	<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mD-t">Nuevo Departamento</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="di">
+			<div class="row g-3">
+				<div class="col-8"><label class="form-label">Nombre *</label><input class="form-control" id="dn" placeholder="Ej. Recursos Humanos"></div>
+				<div class="col-4"><label class="form-label">Código *</label><input class="form-control" id="dc" placeholder="RH"></div>
+				<div class="col-12"><label class="form-label">Descripción</label><textarea class="form-control" id="dd" rows="2"></textarea></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="saveDept()">Guardar</button></div>
+	</div></div>
+</div>
+<!-- Cargo -->
+<div class="modal fade" id="mCargo" tabindex="-1">
+	<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mC-t">Nuevo Cargo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="ci">
+			<div class="row g-3">
+				<div class="col-12"><label class="form-label">Nombre *</label><input class="form-control" id="cn" placeholder="Ej. Gerente de Ventas"></div>
+				<div class="col-sm-6"><label class="form-label">Departamento *</label><select class="form-select" id="cd"><option value="">Seleccione…</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Nivel</label><select class="form-select" id="cniv"><option value="operativo">Operativo</option><option value="tecnico">Técnico</option><option value="supervisorio">Supervisorio</option><option value="gerencial">Gerencial</option><option value="directivo">Directivo</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Salario Base</label><input class="form-control" id="csb" type="number" placeholder="0.00"></div>
+				<div class="col-sm-6"><label class="form-label">Salario Máximo</label><input class="form-control" id="csm" type="number" placeholder="0.00"></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="saveCargo()">Guardar</button></div>
+	</div></div>
+</div>
+<!-- Tipo Deducción -->
+<div class="modal fade" id="mTipo" tabindex="-1">
+	<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mT-t">Nuevo Tipo de Deducción</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="ti">
+			<div class="row g-3">
+				<div class="col-12"><label class="form-label">Nombre *</label><input class="form-control" id="tn" placeholder="Ej. AFP Empleado"></div>
+				<div class="col-sm-6"><label class="form-label">Tipo Cálculo</label><select class="form-select" id="tt"><option value="porcentaje">Porcentaje (%)</option><option value="fijo">Monto Fijo</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Valor *</label><input class="form-control" id="tv" type="number" step="0.01" placeholder="0.00"></div>
+				<div class="col-sm-6"><label class="form-label">Aplica a</label><select class="form-select" id="ta"><option value="todos">Todos</option><option value="fijo">Solo Fijos</option><option value="por_hora">Solo Por Hora</option></select></div>
+				<div class="col-sm-6"><label class="form-label">¿Obligatoria?</label><select class="form-select" id="to"><option value="si">Sí (automática)</option><option value="no">No (manual)</option></select></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="saveTipo()">Guardar</button></div>
+	</div></div>
+</div>
+<!-- Descuento Empleado -->
+<div class="modal fade" id="mDesc" tabindex="-1">
+	<div class="modal-dialog modal-dialog-scrollable"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mDs-t">Asignar Descuento</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="dsi"><input type="hidden" id="dse">
+			<div class="row g-3">
+				<div class="col-12"><label class="form-label">Tipo de Deducción</label><select class="form-select" id="dst" onchange="onTipoDesc()"><option value="">Seleccione…</option></select></div>
+				<div class="col-12"><label class="form-label">Concepto / Descripción *</label><input class="form-control" id="dsn" placeholder="Ej. Préstamo enero 2025, Embargo, etc."></div>
+				<div class="col-sm-6"><label class="form-label">Tipo de Valor</label><select class="form-select" id="dstv"><option value="fijo">Monto Fijo (RD$)</option><option value="porcentaje">Porcentaje (%)</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Valor *</label><input class="form-control" id="dsv" type="number" step="0.01" min="0" placeholder="0.00"></div>
+				<div class="col-sm-6"><label class="form-label">Fecha Inicio</label><input class="form-control" id="dsi2" type="date"></div>
+				<div class="col-sm-6"><label class="form-label">Fecha Fin <span style="font-weight:400;color:var(--muted)">(vacío=indefinido)</span></label><input class="form-control" id="dsf" type="date"></div>
+				<div class="col-sm-6"><label class="form-label">Nº Cuotas <span style="font-weight:400;color:var(--muted)">(0=sin límite)</span></label><input class="form-control" id="dsc" type="number" min="0" value="0"></div>
+				<div class="col-sm-6"><label class="form-label">Estado</label><select class="form-select" id="dsa"><option value="si">Activo</option><option value="no">Inactivo</option></select></div>
+				<div class="col-12"><label class="form-label">Observación</label><textarea class="form-control" id="dso" rows="2" placeholder="Nota interna opcional…"></textarea></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="saveDesc()"><i class="bi bi-check"></i>Guardar</button></div>
+	</div></div>
+</div>
+<!-- Período -->
+<div class="modal fade" id="mPer" tabindex="-1">
+	<div class="modal-dialog"><div class="modal-content">
+		<div class="modal-header"><h5 class="modal-title" id="mP-t">Nuevo Período</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body"><input type="hidden" id="pi">
+			<div class="row g-3">
+				<div class="col-sm-8"><label class="form-label">Nombre *</label><input class="form-control" id="pn" placeholder="Ej. Enero 2025"></div>
+				<div class="col-sm-4"><label class="form-label">Tipo</label><select class="form-select" id="pt"><option value="mensual">Mensual</option><option value="quincenal">Quincenal</option><option value="semanal">Semanal</option></select></div>
+				<div class="col-sm-6"><label class="form-label">Fecha Inicio *</label><input class="form-control" id="pini" type="date"></div>
+				<div class="col-sm-6"><label class="form-label">Fecha Fin *</label><input class="form-control" id="pfin" type="date"></div>
+				<div class="col-sm-6"><label class="form-label">Días Laborables</label><input class="form-control" id="pd" type="number" value="23"></div>
+				<div class="col-sm-6"><label class="form-label">Estado</label><select class="form-select" id="pe"><option value="abierto">Abierto</option><option value="procesado">Procesado</option><option value="cerrado">Cerrado</option></select></div>
+			</div>
+		</div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="bd" onclick="savePer()">Guardar</button></div>
+	</div></div>
+</div>
+<!-- Confirmar -->
+<div class="modal fade" id="mOk" tabindex="-1">
+	<div class="modal-dialog modal-sm"><div class="modal-content">
+		<div class="modal-header" style="background:var(--accent)"><h5 class="modal-title text-white"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar</h5><button class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+		<div class="modal-body text-center py-4"><p id="ok-msg" class="mb-0">¿Eliminar este registro?</p></div>
+		<div class="modal-footer"><button class="bg2" data-bs-dismiss="modal">Cancelar</button><button class="ba" id="ok-btn">Confirmar</button></div>
+	</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ═══════════════════════════════════════════
+//  CORE UTILS
+// ═══════════════════════════════════════════
+const $  = id => document.getElementById(id);
+const fmt = n => (parseFloat(n)||0).toLocaleString('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2});
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : '';
+const today = () => new Date().toISOString().split('T')[0];
+
+// State cache
+let _depts=[], _cargos=[], _tipos=[], _emps=[], _periodos=[];
+let _descEmpId=null, _descFilter='';
+let _empPage=1, _empFilter='', _empAll=[];
+
+// ── API wrapper ──────────────────────────────────────
+async function api(path, opts={}){
+	const defaults = { headers:{'Content-Type':'application/json'} };
+	const res = await fetch(path, {...defaults,...opts});
+	const data = await res.json();
+	if(!res.ok) throw new Error(data.error || 'Error del servidor');
+	return data;
+}
+
+function toast(msg, ok=true){
+	const a=$('toast-a'), d=document.createElement('div');
+	d.className='tm '+(ok?'ok':'er');
+	d.innerHTML=`<i class="bi bi-${ok?'check-circle-fill':'exclamation-circle-fill'}"></i><span>${msg}</span>`;
+	a.appendChild(d); setTimeout(()=>d.remove(),3500);
+}
+
+function confirm(msg, cb){
+	$('ok-msg').textContent = msg;
+	$('ok-btn').onclick = ()=>{ cb(); bootstrap.Modal.getInstance($('mOk'))?.hide(); };
+	new bootstrap.Modal($('mOk')).show();
+}
+
+function bsShow(id){ new bootstrap.Modal($(id)).show(); }
+function bsHide(id){ bootstrap.Modal.getInstance($(id))?.hide(); }
+
+function pillE(e){ const m={activo:'pg',inactivo:'pr',suspendido:'py'}; return `<span class="pill ${m[e]||'pm'}">${cap(e)}</span>`; }
+function pillP(e){ const m={abierto:'pg',procesado:'pb',cerrado:'pr'}; return `<span class="pill ${m[e]||'pm'}">${cap(e)}</span>`; }
+
+// ─── Pagination helper ──────────────────────
+function renderPages(ulId, pages, cur, cb){
+	const ul=$(ulId); ul.innerHTML='';
+	if(pages<=1) return;
+	const li=(t,dis,p)=>{ const l=document.createElement('li'); l.className='page-item'+(dis?' disabled':''); l.innerHTML=`<a class="page-link" href="#">${t}</a>`; l.onclick=ev=>{ev.preventDefault();if(!dis)cb(p);}; ul.appendChild(l); };
+	li('‹', cur===1, cur-1);
+	for(let i=1;i<=Math.min(pages,5);i++) li(i, false, i);
+	li('›', cur===pages, cur+1);
+}
+
+// ═══════════════════════════════════════════
+//  SIDEBAR / NAV
+// ═══════════════════════════════════════════
+const TITLES={dashboard:'Dashboard',empleados:'Empleados',departamentos:'Departamentos',cargos:'Cargos',tipos:'Tipos de Deducción',descuentos:'Descuentos por Empleado',periodos:'Períodos',nomina:'Procesar Nómina',reportes:'Reportes'};
+let _sbOpen=false;
+
+function toggleSb(){
+	const sb=$('sb'), ov=$('ov');
+	if(window.innerWidth<992){ _sbOpen=!_sbOpen; sb.classList.toggle('open',_sbOpen); ov.classList.toggle('show',_sbOpen); }
+	else { const mw=$('mw'); sb.classList.toggle('hide'); mw.classList.toggle('full',sb.classList.contains('hide')); }
+}
+function closeSb(){ $('sb').classList.remove('open'); $('ov').classList.remove('show'); _sbOpen=false; }
+
+function nav(view, btn){
+	document.querySelectorAll('.vw').forEach(v=>v.classList.remove('on'));
+	const el=$('vw-'+view); if(el) el.classList.add('on');
+	document.querySelectorAll('.sl').forEach(b=>b.classList.remove('on'));
+	if(btn) btn.classList.add('on');
+	$('ptitle').textContent = TITLES[view]||view;
+	renderView(view);
+	if(window.innerWidth<992) closeSb();
+}
+function navBtn(view){ document.querySelectorAll('.sl').forEach(b=>{ if(b.getAttribute('onclick')?.includes(`'${view}'`)) b.click(); }); }
+
+function swTab(pre, tab, btn){
+	document.querySelectorAll(`#vw-${pre} .tp`).forEach(p=>p.classList.remove('on'));
+	document.querySelectorAll(`#vw-${pre} .tb2`).forEach(b=>b.classList.remove('on'));
+	$(`${pre}-${tab}`)?.classList.add('on'); if(btn) btn.classList.add('on');
+}
+
+async function renderView(v){
+	if(v==='dashboard')    await renderDash();
+	else if(v==='empleados')    await renderEmps();
+	else if(v==='departamentos')await renderDepts();
+	else if(v==='cargos')       await renderCargos();
+	else if(v==='tipos')        await renderTipos();
+	else if(v==='descuentos')   await renderDescPage();
+	else if(v==='periodos')     await renderPeriodos();
+	else if(v==='nomina')       await renderNominaPage();
+	else if(v==='reportes')     await renderReportes();
+}
+
+// ═══════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════
+async function renderDash(){
+	try{
+		const d = await api('/api/dashboard');
+		$('d-emp').textContent  = d.total_empleados;
+		$('d-masa').textContent = '$'+fmt(d.masa_salarial);
+		$('d-dept').textContent = d.departamentos;
+		$('d-nom').textContent  = d.nominas_procesadas;
+		$('cnt-emp').textContent = d.total_empleados;
+
+		// fetch nominas historial for chart
+		const hist = await api('/api/nomina/historial');
+		const meses=['E','F','M','A','M','J','J','A','S','O','N','D'];
+		// simple: build array from historial
+		const vals = meses.map((_,i)=>{
+			const n = hist.find(h=>{ return false; }); // placeholder
+			return 0;
+		});
+		// fill from historial usando fecha_proc
+		hist.forEach(h=>{ if(h.fecha_proc){ const m=new Date(h.fecha_proc+'T00:00:00').getMonth(); vals[m]=(vals[m]||0)+h.total_neto; } });
+		const maxV = Math.max(...vals,1);
+		$('d-chart').innerHTML = meses.map((m,i)=>`<div class="bc"><div class="b${vals[i]>0?' on':''}" style="height:${Math.max(3,Math.round(vals[i]/maxV*86))}px"></div><span class="l">${m}</span></div>`).join('');
+
+		const tb=$('d-emp-tb');
+		tb.innerHTML = d.empleados_recientes.map(e=>`<tr>
+			<td><strong>${e.nombres} ${e.apellidos}</strong><br><small style="color:var(--muted)">${e.email||''}</small></td>
+			<td><strong>$${fmt(e.salario)}</strong></td>
+			<td class="d-none d-md-table-cell">${pillE(e.estado)}</td>
+		</tr>`).join('') || '<tr><td colspan="3" class="text-center py-4" style="color:var(--muted)">Sin empleados</td></tr>';
+	}catch(ex){ toast(ex.message,false); }
+}
+
+// ═══════════════════════════════════════════
+//  EMPLEADOS
+// ═══════════════════════════════════════════
+async function renderEmps(){
+	try{
+		_empAll = await api('/api/empleados');
+		_depts  = _depts.length ? _depts : await api('/api/departamentos');
+		_cargos = _cargos.length ? _cargos : await api('/api/cargos');
+		paintEmps();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+function deptName(id){ return _depts.find(d=>d.id===id)?.nombre||'—'; }
+function cargoName(id){ return _cargos.find(c=>c.id===id)?.nombre||'—'; }
+
+function paintEmps(){
+	const PP=10;
+	let list = _empAll;
+	if(_empFilter) list=list.filter(e=>`${e.nombres} ${e.apellidos} ${e.cedula} ${e.email||''}`.toLowerCase().includes(_empFilter.toLowerCase()));
+	const pages=Math.ceil(list.length/PP)||1;
+	_empPage=Math.min(_empPage,pages);
+	const items=list.slice((_empPage-1)*PP,_empPage*PP);
+	const tb=$('emp-tb');
+	tb.innerHTML=items.map((e,i)=>`<tr>
+		<td><small style="color:var(--muted)">${(_empPage-1)*PP+i+1}</small></td>
+		<td><strong>${e.nombres} ${e.apellidos}</strong><br><small style="color:var(--muted)">${e.email||''}</small></td>
+		<td class="d-none d-md-table-cell"><small>${e.cedula}</small></td>
+		<td class="d-none d-lg-table-cell">${cargoName(e.cargo_id)}</td>
+		<td><strong>$${fmt(e.salario)}</strong></td>
+		<td>${pillE(e.estado)}</td>
+		<td><button class="ib ie me-1" onclick="editEmp(${e.id})"><i class="bi bi-pencil"></i></button><button class="ib id" onclick="delEmp(${e.id})"><i class="bi bi-trash"></i></button></td>
+	</tr>`).join('')||'<tr><td colspan="7" class="text-center py-5" style="color:var(--muted)"><i class="bi bi-inbox me-2"></i>Sin resultados</td></tr>';
+	$('emp-lbl').textContent=`Mostrando ${items.length} de ${list.length}`;
+	renderPages('emp-pg',pages,_empPage,p=>{_empPage=p;paintEmps();});
+}
+
+function searchEmps(v){ _empFilter=v; _empPage=1; paintEmps(); }
+
+async function openEmp(id=null){
+	_depts = await api('/api/departamentos');
+	$('ei').value=''; ['en','ea','ec','et','em','ei2','es','edir'].forEach(x=>$(x).value='');
+	$('ee').value='activo'; $('eti').value='fijo';
+	const sd=$('ed'); sd.innerHTML='<option value="">Seleccione…</option>';
+	_depts.forEach(d=>sd.innerHTML+=`<option value="${d.id}">${d.nombre}</option>`);
+	$('eca').innerHTML='<option value="">Seleccione depto.</option>';
+	$('mE-t').textContent='Nuevo Empleado';
+	if(id){
+		const e=await api(`/api/empleados/${id}`);
+		$('ei').value=e.id; $('en').value=e.nombres; $('ea').value=e.apellidos;
+		$('ec').value=e.cedula; $('et').value=e.telefono||''; $('em').value=e.email||'';
+		$('ei2').value=e.ingreso; $('es').value=e.salario; $('ee').value=e.estado;
+		$('eti').value=e.tipo; $('edir').value=e.direccion||''; $('ed').value=e.dept_id;
+		$('mE-t').textContent='Editar Empleado';
+		await loadCargosModal(e.cargo_id);
+	}
+	bsShow('mEmp');
+}
+
+async function loadCargosModal(selId=null){
+	const dId=parseInt($('ed').value); if(!dId) return;
+	const cargos=await api(`/api/cargos?dept_id=${dId}`);
+	const s=$('eca'); s.innerHTML='<option value="">Seleccione…</option>';
+	cargos.forEach(c=>s.innerHTML+=`<option value="${c.id}">${c.nombre}</option>`);
+	if(selId) s.value=selId;
+}
+
+async function saveEmp(){
+	const id=$('ei').value;
+	const body={nombres:$('en').value.trim(),apellidos:$('ea').value.trim(),cedula:$('ec').value.trim(),telefono:$('et').value,email:$('em').value,ingreso:$('ei2').value,dept_id:parseInt($('ed').value),cargo_id:parseInt($('eca').value),tipo:$('eti').value,salario:parseFloat($('es').value),estado:$('ee').value,direccion:$('edir').value};
+	if(!body.nombres||!body.apellidos||!body.cedula||!body.dept_id||!body.cargo_id||!body.salario||!body.ingreso){ toast('Completa los campos obligatorios',false); return; }
+	try{
+		id ? await api(`/api/empleados/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/empleados',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Empleado actualizado':'Empleado registrado');
+		bsHide('mEmp'); await renderEmps(); await updBadges();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+function editEmp(id){ openEmp(id); }
+function delEmp(id){ confirm('¿Eliminar este empleado y todos sus descuentos?',async()=>{ try{ await api(`/api/empleados/${id}`,{method:'DELETE'}); toast('Empleado eliminado'); await renderEmps(); await updBadges(); }catch(ex){ toast(ex.message,false); } }); }
+
+// ═══════════════════════════════════════════
+//  DEPARTAMENTOS
+// ═══════════════════════════════════════════
+async function renderDepts(){
+	_depts=await api('/api/departamentos');
+	const tb=$('dept-tb');
+	tb.innerHTML=_depts.map((d,i)=>`<tr style="cursor:pointer" onclick="showDeptDetail(${d.id})">
+		<td><small style="color:var(--muted)">${i+1}</small></td>
+		<td><strong>${d.nombre}</strong></td>
+		<td><code style="font-size:.73rem">${d.codigo}</code></td>
+		<td><button class="ib ie me-1" onclick="event.stopPropagation();editDept(${d.id})"><i class="bi bi-pencil"></i></button><button class="ib id" onclick="event.stopPropagation();delDept(${d.id})"><i class="bi bi-trash"></i></button></td>
+	</tr>`).join('')||'<tr><td colspan="4" class="text-center py-4" style="color:var(--muted)">Sin departamentos</td></tr>';
+}
+
+async function showDeptDetail(id){
+	const d=_depts.find(x=>x.id===id);
+	const [cargos,emps]=await Promise.all([api(`/api/cargos?dept_id=${id}`),api(`/api/empleados`)]);
+	const empsD=emps.filter(e=>e.dept_id===id);
+	$('dept-det').innerHTML=`<h6 class="ff mb-1">${d.nombre} <code style="font-size:.7rem;color:var(--muted)">${d.codigo}</code></h6>
+	<p style="font-size:.8rem;color:var(--muted);margin-bottom:12px">${d.descripcion||'Sin descripción'}</p>
+	<div class="row g-2 mb-3">
+		<div class="col-6"><div class="hl text-center"><div style="font-size:1.3rem;font-family:Syne,sans-serif;font-weight:800">${empsD.length}</div><small style="font-size:.7rem;color:var(--muted)">Empleados</small></div></div>
+		<div class="col-6"><div class="hl text-center"><div style="font-size:1.3rem;font-family:Syne,sans-serif;font-weight:800">${cargos.length}</div><small style="font-size:.7rem;color:var(--muted)">Cargos</small></div></div>
+	</div>
+	<label class="form-label">Cargos</label>
+	${cargos.map(c=>`<div class="dr"><span>${c.nombre}</span><span style="color:var(--muted);font-size:.77rem">${cap(c.nivel)} · $${fmt(c.sal_base)}</span></div>`).join('')||'<p style="color:var(--muted);font-size:.82rem">Sin cargos asignados</p>'}`;
+}
+
+async function openDepto(id=null){
+	['di','dn','dc','dd'].forEach(x=>$(x).value=''); $('mD-t').textContent='Nuevo Departamento';
+	if(id){ const d=_depts.find(x=>x.id===id); if(!d)return; $('di').value=d.id;$('dn').value=d.nombre;$('dc').value=d.codigo;$('dd').value=d.descripcion||'';$('mD-t').textContent='Editar Departamento'; }
+	bsShow('mDept');
+}
+function editDept(id){ openDepto(id); }
+async function saveDept(){
+	const id=$('di').value, nom=$('dn').value.trim(), cod=$('dc').value.trim();
+	if(!nom||!cod){ toast('Nombre y código requeridos',false); return; }
+	const body={nombre:nom,codigo:cod.toUpperCase(),descripcion:$('dd').value};
+	try{
+		id ? await api(`/api/departamentos/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/departamentos',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Departamento actualizado':'Departamento creado'); bsHide('mDept'); await renderDepts();
+	}catch(ex){ toast(ex.message,false); }
+}
+function delDept(id){ confirm('¿Eliminar este departamento?',async()=>{ try{ await api(`/api/departamentos/${id}`,{method:'DELETE'}); toast('Departamento eliminado'); await renderDepts(); }catch(ex){ toast(ex.message,false); } }); }
+
+// ═══════════════════════════════════════════
+//  CARGOS
+// ═══════════════════════════════════════════
+async function renderCargos(){
+	_cargos=await api('/api/cargos'); _depts=await api('/api/departamentos');
+	const tb=$('cargo-tb');
+	tb.innerHTML=_cargos.map((c,i)=>`<tr>
+		<td><small style="color:var(--muted)">${i+1}</small></td><td><strong>${c.nombre}</strong></td>
+		<td class="d-none d-md-table-cell">${deptName(c.dept_id)}</td>
+		<td>$${fmt(c.sal_base)}</td>
+		<td class="d-none d-md-table-cell"><span class="pill pm">${cap(c.nivel)}</span></td>
+		<td><button class="ib ie me-1" onclick="editCargo(${c.id})"><i class="bi bi-pencil"></i></button><button class="ib id" onclick="delCargo(${c.id})"><i class="bi bi-trash"></i></button></td>
+	</tr>`).join('')||'<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">Sin cargos</td></tr>';
+}
+
+async function openCargo(id=null){
+	_depts=await api('/api/departamentos');
+	['ci','cn','csb','csm'].forEach(x=>$(x).value=''); $('cniv').value='operativo';
+	const sd=$('cd'); sd.innerHTML='<option value="">Seleccione…</option>';
+	_depts.forEach(d=>sd.innerHTML+=`<option value="${d.id}">${d.nombre}</option>`);
+	$('mC-t').textContent='Nuevo Cargo';
+	if(id){ const c=_cargos.find(x=>x.id===id); if(!c)return; $('ci').value=c.id;$('cn').value=c.nombre;$('cd').value=c.dept_id;$('cniv').value=c.nivel;$('csb').value=c.sal_base;$('csm').value=c.sal_max;$('mC-t').textContent='Editar Cargo'; }
+	bsShow('mCargo');
+}
+function editCargo(id){ openCargo(id); }
+async function saveCargo(){
+	const id=$('ci').value,nom=$('cn').value.trim(),dId=parseInt($('cd').value);
+	if(!nom||!dId){ toast('Nombre y departamento requeridos',false); return; }
+	const body={nombre:nom,dept_id:dId,nivel:$('cniv').value,sal_base:parseFloat($('csb').value)||0,sal_max:parseFloat($('csm').value)||0};
+	try{
+		id ? await api(`/api/cargos/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/cargos',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Cargo actualizado':'Cargo creado'); bsHide('mCargo'); await renderCargos();
+	}catch(ex){ toast(ex.message,false); }
+}
+function delCargo(id){ confirm('¿Eliminar este cargo?',async()=>{ try{ await api(`/api/cargos/${id}`,{method:'DELETE'}); toast('Cargo eliminado'); await renderCargos(); }catch(ex){ toast(ex.message,false); } }); }
+
+// ═══════════════════════════════════════════
+//  TIPOS DE DEDUCCIÓN
+// ═══════════════════════════════════════════
+async function renderTipos(){
+	_tipos=await api('/api/tipos-deduccion');
+	const tb=$('tipo-tb');
+	tb.innerHTML=_tipos.map(t=>`<tr>
+		<td><strong>${t.nombre}</strong></td><td>${t.tipo==='porcentaje'?'%':'Fijo'}</td>
+		<td>${t.tipo==='porcentaje'?t.valor+'%':'$'+fmt(t.valor)}</td>
+		<td>${t.obligatoria==='si'?'<span class="pill pg">Sí</span>':'<span class="pill pm">No</span>'}</td>
+		<td><button class="ib ie me-1" onclick="editTipo(${t.id})"><i class="bi bi-pencil"></i></button><button class="ib id" onclick="delTipo(${t.id})"><i class="bi bi-trash"></i></button></td>
+	</tr>`).join('')||'<tr><td colspan="5" class="text-center py-4" style="color:var(--muted)">Sin tipos</td></tr>';
+}
+
+function openTipo(id=null){
+	['ti','tn','tv'].forEach(x=>$(x).value=''); $('tt').value='porcentaje';$('ta').value='todos';$('to').value='si';
+	$('mT-t').textContent='Nuevo Tipo de Deducción';
+	if(id){ const t=_tipos.find(x=>x.id===id);if(!t)return;$('ti').value=t.id;$('tn').value=t.nombre;$('tt').value=t.tipo;$('tv').value=t.valor;$('ta').value=t.aplica;$('to').value=t.obligatoria;$('mT-t').textContent='Editar Tipo'; }
+	bsShow('mTipo');
+}
+function editTipo(id){ openTipo(id); }
+async function saveTipo(){
+	const id=$('ti').value,nom=$('tn').value.trim(),val=parseFloat($('tv').value);
+	if(!nom||isNaN(val)){ toast('Nombre y valor requeridos',false); return; }
+	const body={nombre:nom,tipo:$('tt').value,valor:val,aplica:$('ta').value,obligatoria:$('to').value};
+	try{
+		id ? await api(`/api/tipos-deduccion/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/tipos-deduccion',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Tipo actualizado':'Tipo creado'); bsHide('mTipo'); await renderTipos();
+	}catch(ex){ toast(ex.message,false); }
+}
+function delTipo(id){ confirm('¿Eliminar este tipo?',async()=>{ try{ await api(`/api/tipos-deduccion/${id}`,{method:'DELETE'}); toast('Tipo eliminado'); await renderTipos(); }catch(ex){ toast(ex.message,false); } }); }
+
+function calcDeds(){
+	const sal=parseFloat($('cs').value)||0;
+	if(!sal){ $('co').innerHTML=''; return; }
+	// calculadora local usando tipos cargados
+	const items=[];
+	_tipos.filter(t=>t.obligatoria==='si').forEach(t=>{
+		let m=0;
+		if(t.nombre==='ISR'){ const a=sal*12;if(a>416220)m=a<=624329?(a-416220)*.15:a<=867123?31216+(a-624329)*.20:79776+(a-867123)*.25;m=Math.round(m/12*100)/100; }
+		else if(t.tipo==='porcentaje') m=Math.round(sal*(t.valor/100)*100)/100;
+		else m=t.valor;
+		if(m>0) items.push({nombre:t.nombre,monto:m});
+	});
+	const tot=items.reduce((s,x)=>s+x.monto,0);
+	$('co').innerHTML=`<div class="hl mb-3">${items.map(x=>`<div class="dr"><span>${x.nombre}</span><span style="color:var(--accent)">-$${fmt(x.monto)}</span></div>`).join('')}<div class="dr" style="font-family:Syne,sans-serif;font-weight:700"><span>Total Obligatorio</span><span style="color:var(--accent)">-$${fmt(tot)}</span></div></div>
+	<div style="display:flex;justify-content:space-between;align-items:center;background:var(--ink);color:#fff;border-radius:8px;padding:11px 14px"><span style="font-family:Syne,sans-serif;font-size:.82rem">Salario Neto</span><span style="font-family:Syne,sans-serif;font-size:1.15rem;font-weight:800">$${fmt(sal-tot)}</span></div>`;
+}
+
+// ═══════════════════════════════════════════
+//  DESCUENTOS POR EMPLEADO
+// ═══════════════════════════════════════════
+async function renderDescPage(){
+	_tipos = _tipos.length ? _tipos : await api('/api/tipos-deduccion');
+	_emps  = await api('/api/empleados?estado=activo');
+	paintDescList();
+	if(_descEmpId) await renderDescPanel(_descEmpId);
+	await updBadges();
+}
+
+function filterDescList(v){ _descFilter=v; paintDescList(); }
+
+function paintDescList(){
+	let emps=_emps;
+	if(_descFilter) emps=emps.filter(e=>`${e.nombres} ${e.apellidos}`.toLowerCase().includes(_descFilter.toLowerCase()));
+	$('desc-list').innerHTML=emps.map(e=>{
+		const cnt=e._desc_cnt||0;
+		const on=_descEmpId===e.id;
+		return `<div onclick="selectDescEmp(${e.id})" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:${on?'var(--cream)':''};border-left:${on?'3px solid var(--accent)':'3px solid transparent'}">
+			<div><div style="font-weight:600;font-size:.83rem">${e.nombres} ${e.apellidos}</div><div style="font-size:.7rem;color:var(--muted)">${deptName(e.dept_id)}</div></div>
+			<span id="desc-cnt-${e.id}" class="pill ${cnt?'pr':'pm'}" style="font-size:.65rem">${cnt}</span>
+		</div>`;
+	}).join('')||'<div class="empty" style="padding:28px 10px"><i class="bi bi-search"></i><p>Sin resultados</p></div>';
+}
+
+async function selectDescEmp(id){
+	_descEmpId=id;
+	await renderDescPanel(id);
+	paintDescList();
+}
+
+async function renderDescPanel(empId){
+	const e=_emps.find(x=>x.id===empId)||await api(`/api/empleados/${empId}`);
+	const descs=await api(`/api/descuentos?emp_id=${empId}`);
+	// update count cache
+	const emp2=_emps.find(x=>x.id===empId); if(emp2) emp2._desc_cnt=descs.filter(d=>d.activo==='si').length;
+	const el=$(`desc-cnt-${empId}`); if(el){ const cnt=descs.filter(d=>d.activo==='si').length; el.textContent=cnt; el.className='pill '+(cnt?'pr':'pm'); }
+
+	const hoy=today();
+	const activos=descs.filter(d=>d.activo==='si'&&(!d.fin||d.fin>=hoy));
+	const inactivos=descs.filter(d=>d.activo==='no'||(d.fin&&d.fin<hoy));
+	const totF=activos.reduce((s,d)=>s+(d.tipo_val==='fijo'?d.valor:0),0);
+	const totP=activos.reduce((s,d)=>s+(d.tipo_val==='porcentaje'?parseFloat(e.salario)*(d.valor/100):0),0);
+
+	let html=`<div class="box"><div class="bh">
+		<div><h6 style="margin:0"><i class="bi bi-person-dash me-2" style="color:var(--accent)"></i>${e.nombres} ${e.apellidos}</h6><small style="color:var(--muted)">${deptName(e.dept_id)} · Salario: $${fmt(e.salario)}</small></div>
+		<button class="bd" onclick="openDesc(${e.id})"><i class="bi bi-plus"></i>Agregar Descuento</button>
+	</div><div class="bb">
+		<div class="row g-2 mb-3">
+			<div class="col-4"><div class="hl text-center"><div style="font-size:1.2rem;font-family:Syne,sans-serif;font-weight:800;color:var(--accent)">${activos.length}</div><small style="font-size:.7rem;color:var(--muted)">Activos</small></div></div>
+			<div class="col-4"><div class="hl text-center"><div style="font-size:1rem;font-family:Syne,sans-serif;font-weight:800;color:var(--accent)">$${fmt(totF)}</div><small style="font-size:.7rem;color:var(--muted)">Fijo/mes</small></div></div>
+			<div class="col-4"><div class="hl text-center"><div style="font-size:1rem;font-family:Syne,sans-serif;font-weight:800;color:var(--accent)">$${fmt(totP)}</div><small style="font-size:.7rem;color:var(--muted)">Porcentual</small></div></div>
+		</div>`;
+
+	if(activos.length){
+		html+=`<label class="form-label mb-2">Descuentos Activos</label>
+		<div class="table-responsive mb-3"><table class="table"><thead><tr><th>Concepto</th><th>Tipo</th><th>Valor</th><th>Cuotas</th><th>Vigencia</th><th>Acciones</th></tr></thead><tbody>
+		${activos.map(d=>`<tr>
+			<td><strong>${d.nombre}</strong>${d.obs?`<br><small style="color:var(--muted)">${d.obs}</small>`:''}</td>
+			<td>${d.tipo_val==='porcentaje'?'<span class="pill pb">%</span>':'<span class="pill pm">Fijo</span>'}</td>
+			<td><strong>${d.tipo_val==='porcentaje'?d.valor+'%':'$'+fmt(d.valor)}</strong></td>
+			<td>${d.cuotas>0?`<span class="pill py">${d.cuotas} cuotas</span>`:'<small style="color:var(--muted)">—</small>'}</td>
+			<td><small>${d.inicio||'—'}<br>${d.fin?'hasta '+d.fin:'sin fin'}</small></td>
+			<td>
+				<button class="ib ie me-1" onclick="editDesc(${d.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+				<button class="ib ip me-1" onclick="toggleDesc(${d.id},false)" title="Pausar"><i class="bi bi-pause-fill"></i></button>
+				<button class="ib id" onclick="delDesc(${d.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
+			</td>
+		</tr>`).join('')}
+		</tbody></table></div>`;
+	} else {
+		html+=`<div class="empty" style="padding:24px 0"><i class="bi bi-dash-circle"></i><p>Sin descuentos activos. Haz clic en <strong>Agregar Descuento</strong>.</p></div>`;
+	}
+	if(inactivos.length){
+		html+=`<label class="form-label mb-2">Historial / Inactivos</label>
+		<div class="table-responsive"><table class="table"><thead><tr><th>Concepto</th><th>Valor</th><th>Período</th><th>Acc.</th></tr></thead><tbody>
+		${inactivos.map(d=>`<tr style="opacity:.6">
+			<td>${d.nombre}</td><td>${d.tipo_val==='porcentaje'?d.valor+'%':'$'+fmt(d.valor)}</td>
+			<td><small>${d.inicio||'—'} → ${d.fin||'—'}</small></td>
+			<td><button class="ib iv me-1" onclick="toggleDesc(${d.id},true)" title="Reactivar"><i class="bi bi-play-fill"></i></button><button class="ib id" onclick="delDesc(${d.id})"><i class="bi bi-trash"></i></button></td>
+		</tr>`).join('')}
+		</tbody></table></div>`;
+	}
+	html+=`</div></div>`;
+	$('desc-panel').innerHTML=html;
+}
+
+async function openDesc(empId, descId=null){
+	_tipos = _tipos.length ? _tipos : await api('/api/tipos-deduccion');
+	['dsi','dsn','dsv','dsc','dso'].forEach(x=>$(x).value='');
+	$('dse').value=empId; $('dsi2').value=today(); $('dsf').value='';
+	$('dstv').value='fijo'; $('dsa').value='si'; $('dsc').value=0;
+	const sel=$('dst'); sel.innerHTML='<option value="">Seleccione tipo…</option>';
+	_tipos.forEach(t=>sel.innerHTML+=`<option value="${t.id}">${t.nombre}${t.obligatoria==='si'?' (obligatoria)':''}</option>`);
+	const empObj=_emps.find(e=>e.id===empId)||await api(`/api/empleados/${empId}`);
+	$('mDs-t').textContent=`Agregar Descuento — ${empObj.nombres} ${empObj.apellidos}`;
+	if(descId){
+		const d=await api(`/api/descuentos?emp_id=${empId}`).then(list=>list.find(x=>x.id===descId));
+		if(!d) return;
+		$('dsi').value=d.id; $('dst').value=d.tipo_id||''; $('dsn').value=d.nombre;
+		$('dstv').value=d.tipo_val; $('dsv').value=d.valor; $('dsi2').value=d.inicio||'';
+		$('dsf').value=d.fin||''; $('dsc').value=d.cuotas||0; $('dsa').value=d.activo; $('dso').value=d.obs||'';
+		$('mDs-t').textContent=`Editar Descuento — ${empObj.nombres} ${empObj.apellidos}`;
+	}
+	bsShow('mDesc');
+}
+
+function onTipoDesc(){
+	const id=parseInt($('dst').value); if(!id) return;
+	const t=_tipos.find(x=>x.id===id); if(!t) return;
+	if(!$('dsn').value) $('dsn').value=t.nombre;
+	if(t.valor>0){ $('dstv').value=t.tipo; $('dsv').value=t.valor; }
+}
+
+async function saveDesc(){
+	const id=$('dsi').value, empId=parseInt($('dse').value);
+	const nombre=$('dsn').value.trim(), val=parseFloat($('dsv').value);
+	if(!nombre){ toast('El concepto es requerido',false); return; }
+	if(isNaN(val)||val<=0){ toast('El valor debe ser mayor a 0',false); return; }
+	const body={emp_id:empId,tipo_id:parseInt($('dst').value)||null,nombre,tipo_val:$('dstv').value,valor:val,inicio:$('dsi2').value||null,fin:$('dsf').value||null,cuotas:parseInt($('dsc').value)||0,activo:$('dsa').value,obs:$('dso').value.trim()};
+	try{
+		id ? await api(`/api/descuentos/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/descuentos',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Descuento actualizado':'Descuento asignado');
+		bsHide('mDesc'); await renderDescPanel(empId); paintDescList(); await updBadges();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+async function editDesc(id){
+	const empId=_descEmpId; if(!empId) return;
+	await openDesc(empId,id);
+}
+
+async function toggleDesc(id, activate){
+	try{
+		await api(`/api/descuentos/${id}/toggle`,{method:'PATCH',body:JSON.stringify({activo:activate})});
+		toast(activate?'Descuento reactivado':'Descuento pausado');
+		if(_descEmpId) await renderDescPanel(_descEmpId);
+		paintDescList(); await updBadges();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+function delDesc(id){ confirm('¿Eliminar este descuento?',async()=>{ try{ await api(`/api/descuentos/${id}`,{method:'DELETE'}); toast('Descuento eliminado'); if(_descEmpId) await renderDescPanel(_descEmpId); paintDescList(); await updBadges(); }catch(ex){ toast(ex.message,false); } }); }
+
+// ═══════════════════════════════════════════
+//  PERÍODOS
+// ═══════════════════════════════════════════
+async function renderPeriodos(){
+	_periodos=await api('/api/periodos');
+	const g=$('per-grid');
+	g.innerHTML=_periodos.length?_periodos.map((p,i)=>`<div class="col-sm-6 col-xl-4"><div class="box" style="border:${p.estado==='abierto'?'1.5px solid var(--accent)':'1px solid var(--border)'}">
+		<div class="bb">
+			<div class="d-flex justify-content-between align-items-start mb-2">
+				<span style="font-family:Syne,sans-serif;font-size:1.4rem;font-weight:800;color:var(--accent)">${String(i+1).padStart(2,'0')}</span>${pillP(p.estado)}
+			</div>
+			<div style="font-family:Syne,sans-serif;font-size:.95rem;font-weight:700">${p.nombre}</div>
+			<div style="font-size:.76rem;color:var(--muted);margin-top:2px">${cap(p.tipo)} · ${p.dias} días lab.</div>
+			<div style="font-size:.73rem;color:var(--muted);margin-top:6px"><i class="bi bi-calendar3 me-1"></i>${p.inicio} → ${p.fin}</div>
+			<div class="d-flex gap-2 mt-3">
+				<button class="ib ie" onclick="editPer(${p.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+				<button class="ib id" onclick="delPer(${p.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
+				${p.estado==='abierto'?`<button class="ib iv" onclick="irNomina(${p.id})" title="Procesar"><i class="bi bi-play-fill"></i></button>`:''}
+			</div>
+		</div>
+	</div></div>`).join(''):'<div class="col-12"><div class="empty"><i class="bi bi-calendar-x"></i><p>Sin períodos</p></div></div>';
+}
+
+function openPer(id=null){
+	['pi','pn','pini','pfin'].forEach(x=>$(x).value=''); $('pd').value=23;$('pt').value='mensual';$('pe').value='abierto';$('mP-t').textContent='Nuevo Período';
+	if(id){ const p=_periodos.find(x=>x.id===id);if(!p)return;$('pi').value=p.id;$('pn').value=p.nombre;$('pt').value=p.tipo;$('pini').value=p.inicio;$('pfin').value=p.fin;$('pd').value=p.dias;$('pe').value=p.estado;$('mP-t').textContent='Editar Período'; }
+	bsShow('mPer');
+}
+function editPer(id){ openPer(id); }
+async function savePer(){
+	const id=$('pi').value,nom=$('pn').value.trim(),ini=$('pini').value,fin=$('pfin').value;
+	if(!nom||!ini||!fin){ toast('Nombre y fechas requeridos',false); return; }
+	const body={nombre:nom,tipo:$('pt').value,inicio:ini,fin:fin,dias:parseInt($('pd').value)||23,estado:$('pe').value};
+	try{
+		id ? await api(`/api/periodos/${id}`,{method:'PUT',body:JSON.stringify(body)}) : await api('/api/periodos',{method:'POST',body:JSON.stringify(body)});
+		toast(id?'Período actualizado':'Período creado'); bsHide('mPer'); await renderPeriodos();
+	}catch(ex){ toast(ex.message,false); }
+}
+function delPer(id){ confirm('¿Eliminar este período?',async()=>{ try{ await api(`/api/periodos/${id}`,{method:'DELETE'}); toast('Período eliminado'); await renderPeriodos(); }catch(ex){ toast(ex.message,false); } }); }
+function irNomina(pid){ navBtn('nomina'); setTimeout(async()=>{ $('np').value=pid; await calcNomina(); },150); }
+
+// ═══════════════════════════════════════════
+//  NÓMINA
+// ═══════════════════════════════════════════
+async function renderNominaPage(){
+	[_periodos,_depts]=await Promise.all([api('/api/periodos'),api('/api/departamentos')]);
+	const sp=$('np'); sp.innerHTML='<option value="">Seleccione período…</option>';
+	_periodos.forEach(p=>sp.innerHTML+=`<option value="${p.id}">${p.nombre}</option>`);
+	const abierto=_periodos.find(p=>p.estado==='abierto');
+	if(abierto) sp.value=abierto.id;
+	const sd=$('nd'); sd.innerHTML='<option value="">Todos</option>';
+	_depts.forEach(d=>sd.innerHTML+=`<option value="${d.id}">${d.nombre}</option>`);
+	const se=$('re'); se.innerHTML='<option value="">Seleccione…</option>';
+	const empsAll=await api('/api/empleados'); empsAll.forEach(e=>se.innerHTML+=`<option value="${e.id}">${e.nombres} ${e.apellidos}</option>`);
+	const srp=$('rp'); srp.innerHTML='<option value="">Seleccione…</option>';
+	_periodos.forEach(p=>srp.innerHTML+=`<option value="${p.id}">${p.nombre}</option>`);
+	await renderHistorial();
+}
+
+let _nominaData=null;
+async function calcNomina(){
+	const pId=$('np').value,dId=$('nd').value;
+	if(!pId){ toast('Selecciona un período',false); return; }
+	const btn=$('btn-calc'); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Calculando…';
+	try{
+		const body={periodo_id:parseInt(pId)};
+		if(dId) body.dept_id=parseInt(dId);
+		_nominaData=await api('/api/nomina/calcular',{method:'POST',body:JSON.stringify(body)});
+		$('np-lbl').textContent=`${_nominaData.periodo.nombre} · ${_nominaData.periodo.dias} días`;
+		const tb=$('nom-tb');
+		tb.innerHTML=_nominaData.filas.map(f=>`<tr>
+			<td><strong>${f.nombre}</strong><br><small style="color:var(--muted)">${f.dept}</small></td>
+			<td>$${fmt(f.salario_base)}</td>
+			<td class="d-none d-md-table-cell">${_nominaData.periodo.dias}</td>
+			<td>$${fmt(f.sal_calculado)}</td>
+			<td style="color:var(--accent)">$${fmt(f.desc_oblig)}</td>
+			<td style="color:var(--gold)">$${fmt(f.desc_indiv)}</td>
+			<td style="color:var(--green);font-weight:700">$${fmt(f.salario_neto)}</td>
+			<td><button class="ib iv" onclick='showDetalle(${JSON.stringify(f)})' title="Ver detalle"><i class="bi bi-eye"></i></button></td>
+		</tr>`).join('')||'<tr><td colspan="8" class="text-center py-5" style="color:var(--muted)">Sin empleados</td></tr>';
+		$('t-bruto').textContent='$'+fmt(_nominaData.total_bruto);
+		$('t-desc').textContent='$'+fmt(_nominaData.total_desc);
+		$('t-neto').textContent='$'+fmt(_nominaData.total_neto);
+	}catch(ex){ toast(ex.message,false); }
+	btn.disabled=false; btn.innerHTML='<i class="bi bi-calculator"></i>Calcular';
+}
+
+function showDetalle(f){
+	const items=[...f.detalle_obl,...f.detalle_ind];
+	toast(`${f.nombre} | Bruto $${fmt(f.sal_calculado)} | Desc $${fmt(f.total_desc)} | Neto $${fmt(f.salario_neto)}`);
+}
+
+async function procesarNomina(){
+	const pId=$('np').value; if(!pId){ toast('Selecciona un período',false); return; }
+	if(!_nominaData){ toast('Primero calcula la nómina',false); return; }
+	const btn=$('btn-proc'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+	try{
+		await api('/api/nomina/procesar',{method:'POST',body:JSON.stringify({periodo_id:parseInt(pId)})});
+		toast('¡Nómina procesada correctamente!');
+		await renderHistorial(); await renderPeriodos();
+	}catch(ex){ toast(ex.message,false); }
+	btn.disabled=false; btn.innerHTML='<i class="bi bi-check-all"></i>Procesar';
+}
+
+async function renderHistorial(){
+	const hist=await api('/api/nomina/historial');
+	$('hist-tb').innerHTML=hist.map(h=>`<tr><td><strong>${h.periodo_nombre}</strong></td><td>${h.total_emps}</td><td>$${fmt(h.total_bruto)}</td><td style="color:var(--green);font-weight:700">$${fmt(h.total_neto)}</td><td>${h.fecha_proc}</td><td><span class="pill pg">Procesada</span></td></tr>`).join('')||'<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">Sin nóminas procesadas</td></tr>';
+}
+
+let _reciboData=null;
+async function genRecibo(){
+	const eId=$('re').value,pId=$('rp').value;
+	if(!eId||!pId){ $('rec-out').innerHTML='<div class="empty"><i class="bi bi-receipt"></i><p>Selecciona empleado y período</p></div>'; return; }
+	try{
+		_reciboData=await api(`/api/nomina/recibo?emp_id=${eId}&periodo_id=${pId}`);
+		const r=_reciboData, e=r.empleado, p=r.periodo;
+		$('rec-out').innerHTML=`<div class="rw" id="rec-print">
+			<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+				<div><div style="font-family:Syne,sans-serif;font-size:1.25rem;font-weight:800">Nómina<span style="color:var(--accent)">RD</span></div><div style="font-size:.72rem;color:var(--muted)">Sistema de Nómina · República Dominicana</div></div>
+				<div style="text-align:right"><div style="font-family:Syne,sans-serif;font-size:.8rem;font-weight:700">RECIBO DE PAGO</div><div style="font-size:.73rem;color:var(--muted)">${p.nombre}</div><div style="font-size:.7rem;color:var(--muted)">${p.inicio} → ${p.fin}</div></div>
+			</div>
+			<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-bottom:14px;font-size:.8rem">
+				<div><span style="color:var(--muted);font-size:.68rem;text-transform:uppercase;font-family:Syne,sans-serif">Empleado</span><div style="font-weight:700">${e.nombres} ${e.apellidos}</div></div>
+				<div><span style="color:var(--muted);font-size:.68rem;text-transform:uppercase;font-family:Syne,sans-serif">Cédula</span><div>${e.cedula}</div></div>
+				<div><span style="color:var(--muted);font-size:.68rem;text-transform:uppercase;font-family:Syne,sans-serif">Cargo</span><div>${r.cargo}</div></div>
+				<div><span style="color:var(--muted);font-size:.68rem;text-transform:uppercase;font-family:Syne,sans-serif">Departamento</span><div>${r.departamento}</div></div>
+			</div>
+			<div class="rs">Ingresos</div>
+			<div class="rr"><span>Salario Mensual</span><span>$${fmt(e.salario)}</span></div>
+			<div class="rr"><span>Calculado (${p.dias} días)</span><span>$${fmt(r.sal_calculado)}</span></div>
+			${r.deducciones_obligatorias.length?`<div class="rs">Deducciones Obligatorias</div>${r.deducciones_obligatorias.map(d=>`<div class="rr"><span>${d.nombre}</span><span style="color:var(--accent)">-$${fmt(d.monto)}</span></div>`).join('')}`:''}
+			${r.descuentos_individuales.length?`<div class="rs">Descuentos Individuales</div>${r.descuentos_individuales.map(d=>`<div class="rr"><span>${d.nombre}</span><span style="color:var(--gold)">-$${fmt(d.monto)}</span></div>`).join('')}`:''}
+			<div style="margin-top:10px"><div class="rr tot"><span>SALARIO NETO A PAGAR</span><span style="color:var(--green)">$${fmt(r.salario_neto)}</span></div></div>
+			<div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);border-top:1px dashed var(--border);margin-top:12px;padding-top:10px">
+				<span>Fecha de pago: ${p.fin}</span><span>Generado: ${new Date().toLocaleDateString('es-DO')}</span>
+			</div>
+		</div>`;
+	}catch(ex){ toast(ex.message,false); }
+}
+
+function printRecibo(){
+	const r=$('rec-print'); if(!r){ toast('Genera un recibo primero',false); return; }
+	const w=window.open('','_blank');
+	w.document.write(`<html><head><title>Recibo de Pago</title><style>body{font-family:sans-serif;padding:40px;color:#111}.rw{max-width:520px;margin:auto}.rr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #ddd;font-size:.83rem}.rr.tot{font-weight:700;border-top:2px solid #111;border-bottom:2px solid #111}</style></head><body>${r.outerHTML}</body></html>`);
+	w.print();
+}
+
+// ═══════════════════════════════════════════
+//  REPORTES
+// ═══════════════════════════════════════════
+async function renderReportes(){
+	try{
+		const [res,depts,emps]=await Promise.all([api('/api/reportes/resumen'),api('/api/reportes/por-departamento'),api('/api/reportes/por-empleado')]);
+		$('rep-stats').innerHTML=`
+			<div class="col-sm-6 col-lg-3"><div class="kc b"><div class="ki"><i class="bi bi-people"></i></div><div class="kv">${res.empleados_activos}</div><div class="kl">Empleados Activos</div></div></div>
+			<div class="col-sm-6 col-lg-3"><div class="kc r"><div class="ki"><i class="bi bi-cash"></i></div><div class="kv">$${fmt(res.masa_salarial)}</div><div class="kl">Masa Salarial</div></div></div>
+			<div class="col-sm-6 col-lg-3"><div class="kc g"><div class="ki"><i class="bi bi-graph-up"></i></div><div class="kv">$${fmt(res.salario_promedio)}</div><div class="kl">Salario Promedio</div></div></div>
+			<div class="col-sm-6 col-lg-3"><div class="kc n"><div class="ki"><i class="bi bi-tags"></i></div><div class="kv">${res.tipos_deduccion}</div><div class="kl">Tipos de Deducción</div></div></div>
+			<div class="col-12"><div class="box"><div class="bh"><h6>Distribución por Estado</h6></div><div class="bb">
+				${Object.entries(res.distribucion_estado).map(([est,cnt])=>{ const pct=res.empleados_activos?Math.round(cnt/(res.empleados_activos)*100):0; return `<div class="mb-2"><div class="d-flex justify-content-between mb-1"><small style="font-family:Syne,sans-serif;font-weight:700">${cap(est)}</small><small>${cnt}</small></div><div style="background:var(--border);border-radius:4px;height:8px"><div style="width:${pct}%;height:100%;border-radius:4px;background:${est==='activo'?'var(--green)':est==='inactivo'?'var(--accent)':'var(--gold)'}"></div></div></div>`; }).join('')}
+			</div></div></div>`;
+		$('rdept-tb').innerHTML=depts.map(d=>`<tr><td><strong>${d.nombre}</strong></td><td>${d.empleados}</td><td>$${fmt(d.promedio)}</td><td>$${fmt(d.total)}</td><td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;background:var(--border);border-radius:3px;height:6px"><div style="width:${d.pct}%;height:100%;border-radius:3px;background:var(--accent)"></div></div><small>${d.pct}%</small></div></td></tr>`).join('');
+		paintRepEmp(emps);
+	}catch(ex){ toast(ex.message,false); }
+}
+let _repEmps=[];
+function paintRepEmp(list){
+	_repEmps=list||_repEmps;
+	$('remp-tb').innerHTML=_repEmps.map(e=>`<tr>
+		<td><strong>${e.nombre}</strong></td>
+		<td class="d-none d-md-table-cell">${e.dept}</td>
+		<td>$${fmt(e.salario)}</td>
+		<td style="color:var(--accent)">-$${fmt(e.desc_oblig)}</td>
+		<td style="color:var(--gold)">-$${fmt(e.desc_indiv)}</td>
+		<td style="color:var(--green);font-weight:700">$${fmt(e.neto)}</td>
+	</tr>`).join('')||'<tr><td colspan="6" class="text-center py-4" style="color:var(--muted)">Sin resultados</td></tr>';
+}
+async function filterRepEmp(q){
+	const list=await api(`/api/reportes/por-empleado?q=${encodeURIComponent(q)}`);
+	paintRepEmp(list);
+}
+
+// ═══════════════════════════════════════════
+//  BADGES
+// ═══════════════════════════════════════════
+async function updBadges(){
+	try{
+		const [emps,descs]=await Promise.all([api('/api/empleados'),api('/api/descuentos')]);
+		$('cnt-emp').textContent=emps.length;
+		$('cnt-desc').textContent=descs.filter(d=>d.activo==='si').length;
+		// refresh _emps cache
+		_emps=emps;
+	}catch(_){}
+}
+
+// ═══════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
+	$('tdate').textContent=new Date().toLocaleDateString('es-DO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+	window.addEventListener('resize',()=>{ if(window.innerWidth>=992){ $('sb').classList.remove('open');$('ov').classList.remove('show'); } });
+	// Pre-load caches
+	try{
+		[_depts,_cargos,_tipos]=await Promise.all([api('/api/departamentos'),api('/api/cargos'),api('/api/tipos-deduccion')]);
+		await updBadges();
+		await renderDash();
+	}catch(ex){ toast('No se pudo conectar con el servidor: '+ex.message,false); }
+});
+</script>
+</body>
+</html>

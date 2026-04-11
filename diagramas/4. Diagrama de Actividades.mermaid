@@ -1,0 +1,32 @@
+flowchart TD
+    Inicio([Inicio: Gestor inicia proceso]) --> SeleccionarPeriodo[Seleccionar Período de Pago]
+    SeleccionarPeriodo --> ValidarPeriodo{Período abierto?}
+    ValidarPeriodo -->|No| MostrarError[Mostrar mensaje: "Período cerrado"]
+    MostrarError --> Fin([Fin])
+
+    ValidarPeriodo -->|Sí| ObtenerEmpleados[Obtener lista de empleados activos]
+    ObtenerEmpleados --> InicializarTotales[Inicializar totales de nómina: total_bruto=0, total_neto=0]
+    
+    InicializarTotales --> LoopEmpleados{¿Hay más empleados?}
+    
+    LoopEmpleados -->|Sí| ProcesarEmpleado[Tomar siguiente empleado]
+    ProcesarEmpleado --> CalcularSalarioBruto[Calcular salario bruto<br>(salario_base / 30 * días_laborados)]
+    
+    CalcularSalarioBruto --> ObtenerDeduccionesObligatorias[Obtener deducciones obligatorias<br>AFP, SFS, ISR según reglas]
+    ObtenerDeduccionesObligatorias --> CalcularDescOblig[Calcular monto de deducciones obligatorias]
+    
+    CalcularDescOblig --> ObtenerDeduccionesIndiv[Obtener deducciones individuales activas<br>para el período (Préstamos, Embargos)]
+    ObtenerDeduccionesIndiv --> CalcularDescIndiv[Calcular monto de deducciones individuales]
+    
+    CalcularDescIndiv --> CalcularTotalDesc[Calcular total_desc = desc_oblig + desc_indiv]
+    CalcularTotalDesc --> CalcularSalarioNeto[Calcular salario_neto = salario_bruto - total_desc]
+    
+    CalcularSalarioNeto --> AcumularTotales[Acumular totales:<br>total_bruto += salario_bruto<br>total_neto += salario_neto]
+    
+    AcumularTotales --> CrearDetalle[Crear registro en NominaDetalle<br>(salario_base, dias, sal_calculado, descuentos, neto)]
+    
+    CrearDetalle --> LoopEmpleados
+    
+    LoopEmpleados -->|No| GuardarNomina[Crear y guardar registro en Nomina<br>con total_bruto, total_neto, fecha_proc=now]
+    GuardarNomina --> Finalizar[Mostrar mensaje: "Nómina procesada exitosamente"]
+    Finalizar --> Fin

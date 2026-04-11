@@ -1,222 +1,259 @@
-# 🇩🇴 Sistema de Nómina RD
+# 🇩🇴 Sistema de Nómina RD — Flask + SQLite
 
-Sistema completo de gestión de nómina para empresas en República Dominicana, desarrollado en un único archivo HTML5 con Bootstrap 5. No requiere instalación ni servidor — basta con abrir el archivo en cualquier navegador moderno.
-
----
-
-## Inicio Rápido
-
-1. Descarga el archivo `nomina.html`
-2. Ábrelo en cualquier navegador moderno (Chrome, Firefox, Edge)
-3. ¡Listo! El sistema carga con datos de ejemplo para explorar
-
-> **Los datos se guardan automáticamente** en el `localStorage` del navegador. No se necesita base de datos ni conexión a internet.
+Sistema completo de nómina para la República Dominicana con Flask, SQLAlchemy y SQLite.
 
 ---
 
-## Módulos del Sistema
+## 📁 Estructura del proyecto
 
-### 1. Empleados
-Gestión completa del personal de la empresa.
-
-| Funcionalidad | Detalle |
-|---|---|
-| Registro | Nombres, cédula, email, teléfono, dirección, fecha de ingreso |
-| Clasificación | Tipo de empleado: Fijo, Por Hora, Temporal |
-| Organización | Asignación a departamento y cargo |
-| Estado | Activo / Inactivo / Suspendido |
-| Búsqueda | Filtro en tiempo real por nombre, cédula o email |
-| Paginación | 10 empleados por página |
-
-**CRUD:** Crear · Leer · Actualizar · Eliminar
+```
+nominard/
+├── app.py           ← Servidor Flask + todas las rutas API REST
+├── models.py        ← Modelos de la base de datos (SQLAlchemy)
+├── seed.py          ← Script para poblar datos de ejemplo
+├── requirements.txt ← Dependencias Python
+├── nominard.db      ← Base de datos SQLite (se crea automáticamente)
+└── templates/
+    └── index.html   ← Frontend completo (Bootstrap 5 + JS)
+```
 
 ---
 
-### 2. Departamentos
-Organización de las áreas de la empresa.
+## 🗃️ Diagrama de la Base de Datos
 
-- Nombre, código y descripción
-- Vista lateral con cargos y cantidad de empleados por departamento
-- Validación: no se puede eliminar un departamento con empleados asignados
+```
+departamentos          cargos
+─────────────          ──────────────────────────────
+id (PK)                id (PK)
+nombre                 nombre
+codigo                 dept_id ──────────────────────→ departamentos.id
+descripcion            nivel
+creado_en              sal_base
+                       sal_max
+                       creado_en
 
-**CRUD:** Crear · Leer · Actualizar · Eliminar
+empleados
+─────────────────────────────────────
+id (PK)
+nombres
+apellidos
+cedula (UNIQUE)
+telefono
+email
+direccion
+ingreso
+dept_id ─────────────────────────────→ departamentos.id
+cargo_id ────────────────────────────→ cargos.id
+tipo           (fijo|por_hora|temporal)
+salario
+estado         (activo|inactivo|suspendido)
+creado_en
 
----
+tipos_deduccion                     descuentos_empleado
+─────────────────────────           ──────────────────────────────────
+id (PK)                             id (PK)
+nombre (UNIQUE)                     emp_id ──────────────→ empleados.id
+tipo    (porcentaje|fijo)           tipo_id ─────────────→ tipos_deduccion.id
+valor                               nombre
+aplica  (todos|fijo|por_hora)       tipo_val  (fijo|porcentaje)
+obligatoria (si|no)                 valor
+creado_en                           inicio
+                                    fin
+                                    cuotas
+                                    activo (si|no)
+                                    obs
+                                    creado_en
 
-### 3. Cargos
-Catálogo de posiciones por departamento.
-
-- Nombre del cargo y nivel jerárquico (Operativo, Técnico, Supervisorio, Gerencial, Directivo)
-- Rango salarial: salario base y máximo
-- Vinculado a un departamento
-- Validación: no se puede eliminar un cargo con empleados asignados
-
-**CRUD:** Crear · Leer · Actualizar · Eliminar
-
----
-
-### 4. Períodos de Nómina
-Control de los ciclos de pago.
-
-- Tipos: Mensual, Quincenal, Semanal
-- Fechas de inicio y fin, días laborables
-- Estados: Abierto → Procesado → Cerrado
-- Acceso directo para procesar la nómina desde la tarjeta del período
-
-**CRUD:** Crear · Leer · Actualizar · Eliminar
-
----
-
-### 5. Nómina
-Módulo central de cálculo y procesamiento de pagos.
-
-#### Pestaña: Procesar Nómina
-- Selección de período y filtro por departamento
-- Cálculo automático proporcional por días laborables
-- Campo de bonificaciones individuales por empleado
-- Selección múltiple con checkbox (procesar todos o seleccionados)
-- Totales en tiempo real: Bruto · Descuentos · Neto
-
-#### Pestaña: Historial
-- Registro de todas las nóminas procesadas
-- Total de empleados, bruto y neto por período
-
-#### Pestaña: Recibo de Pago
-- Generación de recibo individual por empleado y período
-- Detalle de ingresos y cada deducción aplicada
-- Función de impresión directa
-
----
-
-### 6. Deducciones (Tipos Generales)
-Catálogo de deducciones que aplican a la nómina.
-
-| Deducción | Tipo | Valor por defecto |
-|---|---|---|
-| AFP Empleado | Porcentaje | 2.87% |
-| SFS Empleado | Porcentaje | 3.04% |
-| ISR | Escala progresiva | Automático |
-| Préstamo Empresa | Monto fijo | RD$2,000 |
-
-- Las deducciones marcadas como **Obligatorias** se aplican automáticamente a todos los empleados elegibles
-- Las deducciones **No Obligatorias** están disponibles para asignación individual
-- Calculadora interactiva: ingresa un salario y ve el desglose completo en tiempo real
-
-**CRUD:** Crear · Leer · Actualizar · Eliminar
+periodos                nominas                 nominas_detalle
+────────────────        ──────────────────      ──────────────────────────
+id (PK)                 id (PK)                 id (PK)
+nombre                  periodo_id ──→ periodos.id   nomina_id ──→ nominas.id
+tipo                    total_emps              emp_id ──────→ empleados.id
+inicio                  total_bruto             salario_base
+fin                     total_neto              dias
+dias                    fecha_proc              sal_calculado
+estado                  estado                  bonificacion
+creado_en               creado_en               desc_oblig
+                                                desc_indiv
+                                                total_desc
+                                                salario_neto
+```
 
 ---
 
-### 7. Deducciones por Empleado *(módulo individual)*
-Asignación de descuentos específicos por persona.
+## 🚀 Instalación paso a paso
 
-Este módulo resuelve el caso en que **no todos los empleados tienen los mismos descuentos**: préstamos, embargos, cooperativas, seguros voluntarios, etc.
+### 1. Requisitos previos
+- Python 3.9 o superior
+- pip
 
-#### Flujo de uso:
-1. Selecciona un empleado de la lista izquierda
-2. Haz clic en **Agregar**
-3. Elige un tipo del catálogo o escribe un nombre personalizado
-4. Define si es monto fijo o porcentaje
-5. (Opcional) establece fechas de inicio/fin y número de cuotas
+Verificar:
+```bash
+python --version   # debe ser 3.9+
+pip --version
+```
 
-#### Funcionalidades:
-- **Vista por empleado**: cuántas deducciones activas tiene cada uno
-- **Activar / Desactivar**: pausa una deducción sin eliminarla (historial conservado)
-- **Reactivar**: vuelve a activar una deducción pausada
-- **Vigencia**: fecha de fin y número de cuotas configurables
-- **Observaciones**: notas internas por asignación
-- Las deducciones individuales activas **se incluyen automáticamente** en el cálculo de nómina y en el recibo de pago
+### 2. Crear entorno virtual (recomendado)
+```bash
+# Crear el entorno
+python -m venv venv
 
-**CRUD:** Crear · Leer · Actualizar · Eliminar · Desactivar · Reactivar
+# Activar en Windows
+venv\Scripts\activate
+
+# Activar en Mac/Linux
+source venv/bin/activate
+```
+
+### 3. Instalar dependencias
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Crear la base de datos y poblar datos de ejemplo
+```bash
+python seed.py
+```
+Esto creará `nominard.db` con:
+- 5 departamentos
+- 8 cargos
+- 8 tipos de deducción (AFP, SFS, ISR, etc.)
+- 7 empleados de ejemplo
+- 3 descuentos individuales demo
+- 3 períodos de nómina
+
+### 5. Ejecutar el servidor
+```bash
+python app.py
+```
+
+### 6. Abrir en el navegador
+```
+http://localhost:5000
+```
 
 ---
 
-### 8. Reportes
-Vistas analíticas del estado de la nómina.
+## 🔌 API REST — Endpoints
 
-| Reporte | Contenido |
-|---|---|
-| Resumen General | Empleados activos, masa salarial, salario promedio, barras de distribución por estado |
-| Por Departamento | Empleados, salario promedio, total y porcentaje de la masa salarial |
-| Por Empleado | Cargo, salario, deducciones mensuales y neto; con búsqueda en tiempo real |
+### Departamentos
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/departamentos` | Listar todos |
+| POST   | `/api/departamentos` | Crear nuevo |
+| PUT    | `/api/departamentos/<id>` | Actualizar |
+| DELETE | `/api/departamentos/<id>` | Eliminar |
+
+### Cargos
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/cargos?dept_id=N` | Listar (filtrar por depto.) |
+| POST   | `/api/cargos` | Crear nuevo |
+| PUT    | `/api/cargos/<id>` | Actualizar |
+| DELETE | `/api/cargos/<id>` | Eliminar |
+
+### Empleados
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/empleados?q=texto&estado=activo` | Listar con filtros |
+| GET    | `/api/empleados/<id>` | Obtener uno |
+| POST   | `/api/empleados` | Crear nuevo |
+| PUT    | `/api/empleados/<id>` | Actualizar |
+| DELETE | `/api/empleados/<id>` | Eliminar |
+
+### Tipos de Deducción
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/tipos-deduccion` | Listar todos |
+| POST   | `/api/tipos-deduccion` | Crear nuevo |
+| PUT    | `/api/tipos-deduccion/<id>` | Actualizar |
+| DELETE | `/api/tipos-deduccion/<id>` | Eliminar |
+
+### Descuentos por Empleado
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/descuentos?emp_id=N` | Listar (filtrar por empleado) |
+| POST   | `/api/descuentos` | Asignar descuento |
+| PUT    | `/api/descuentos/<id>` | Actualizar |
+| DELETE | `/api/descuentos/<id>` | Eliminar |
+| PATCH  | `/api/descuentos/<id>/toggle` | Activar/desactivar |
+
+### Períodos
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/periodos` | Listar todos |
+| POST   | `/api/periodos` | Crear nuevo |
+| PUT    | `/api/periodos/<id>` | Actualizar |
+| DELETE | `/api/periodos/<id>` | Eliminar |
+
+### Nómina
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| POST   | `/api/nomina/calcular` | Calcular (sin guardar) |
+| POST   | `/api/nomina/procesar` | Procesar y guardar |
+| GET    | `/api/nomina/historial` | Historial procesadas |
+| GET    | `/api/nomina/recibo?emp_id=N&periodo_id=N` | Recibo de pago |
+
+### Reportes
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET    | `/api/reportes/resumen` | Resumen general |
+| GET    | `/api/reportes/por-departamento` | Por departamento |
+| GET    | `/api/reportes/por-empleado?q=texto` | Por empleado |
 
 ---
 
-## Cálculo del ISR (Impuesto sobre la Renta)
+## 🔄 Migrar a PostgreSQL / MySQL
 
-El sistema aplica la escala progresiva vigente en República Dominicana:
+Solo cambia la línea de conexión en `app.py`:
+
+```python
+# SQLite (por defecto, ideal para desarrollo)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///nominard.db"
+
+# PostgreSQL
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://user:password@localhost/nominard"
+
+# MySQL
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@localhost/nominard"
+```
+
+Instalar el driver correspondiente:
+```bash
+pip install psycopg2-binary  # PostgreSQL
+pip install pymysql          # MySQL
+```
+
+---
+
+## 📝 Escala ISR República Dominicana (2024-2025)
 
 | Renta Anual | Tasa |
-|---|---|
-| Hasta RD$416,220 | Exento |
-| RD$416,220 – RD$624,329 | 15% |
-| RD$624,329 – RD$867,123 | 20% |
-| Más de RD$867,123 | 25% |
+|-------------|------|
+| Hasta RD$ 416,220 | Exento |
+| RD$ 416,220 – RD$ 624,329 | 15% |
+| RD$ 624,329 – RD$ 867,123 | 20% |
+| Más de RD$ 867,123 | 25% |
 
-El ISR se calcula anualizado y se divide entre 12 para el descuento mensual.
+AFP Empleado: **2.87%** del salario  
+SFS Empleado: **3.04%** del salario
 
 ---
 
-## Almacenamiento de Datos
+## 🛠️ Comandos útiles
 
-Toda la información se almacena en el `localStorage` del navegador bajo la clave `payroll_db`.
+```bash
+# Ejecutar en modo producción con Gunicorn
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
 
+# Resetear la base de datos
+rm nominard.db
+python seed.py
+
+# Ver la BD con SQLite CLI
+sqlite3 nominard.db
+.tables
+SELECT * FROM empleados;
+.quit
 ```
-localStorage['payroll_db'] = {
-  empleados, departamentos, cargos,
-  periodos, deducciones, nominas,
-  asignaciones, nextId
-}
-```
-
-> Los datos son locales al navegador y dispositivo. Para respaldo, exporta el contenido del `localStorage` manualmente o agrega un módulo de exportación a JSON/Excel según necesidad.
-
----
-
-## Tecnologías Utilizadas
-
-| Tecnología | Versión | Uso |
-|---|---|---|
-| HTML5 | — | Estructura |
-| Bootstrap | 5.3.2 | Layout y componentes UI |
-| Bootstrap Icons | 1.11.3 | Iconografía |
-| Syne (Google Fonts) | — | Tipografía de títulos |
-| DM Sans (Google Fonts) | — | Tipografía de cuerpo |
-| JavaScript (ES6+) | — | Lógica y CRUD |
-| localStorage API | — | Persistencia de datos |
-
-Sin dependencias de backend. Sin base de datos externa. Sin frameworks JS.
-
----
-
-## Estructura del Proyecto
-
-```
-nomina.html          ← Archivo único, todo incluido
-README.md            ← Este documento
-```
-
----
-
-## Requisitos
-
-- Navegador moderno con soporte para ES6+ y localStorage
-- Conexión a internet solo en la primera carga (para cargar Bootstrap y fuentes desde CDN)
-- Para uso offline: descarga Bootstrap, Bootstrap Icons y las fuentes localmente y actualiza los `<link>` del archivo
-
----
-
-## Datos de Ejemplo Precargados
-
-Al iniciar por primera vez el sistema carga automáticamente:
-
-- **5 departamentos**: Administración, Ventas, Tecnología, Operaciones, RRHH
-- **8 cargos** distribuidos entre departamentos
-- **7 empleados** activos con salarios reales de referencia
-- **3 períodos**: Enero y Febrero 2025 (cerrados), Marzo 2025 (abierto)
-- **4 tipos de deducciones**: AFP, SFS, ISR, Préstamo Empresa
-
----
-
-## Licencia
-
-Uso libre para fines educativos y empresariales internos.

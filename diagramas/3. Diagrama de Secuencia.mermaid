@@ -1,0 +1,26 @@
+graph TD
+    subge["Gestor de Nóminas"] --> CU01
+    subge --> CU02
+    subge --> CU03
+    subge --> CU04
+    subge --> CU05
+    subge --> CU06
+
+    CU01["Gestionar Empleados"]
+    CU02["Gestionar Departamentos"]
+    CU03["Gestionar Cargos"]
+    CU04["Gestionar Tipos de Deducción"]
+    CU05["Gestionar Descuentos por Empleado"]
+    CU06["Procesar Nómina"]
+
+    subge --> CU07["Consultar Períodos"]
+    subge --> CU08["Ver Reporte de Nómina"]
+
+    CU01 --> includes1["<extend>>"]
+    includes1 --> CALC["Calcular Salario Neto"]
+
+    CU06 --> includes2["<include>>"]
+    includes2 --> CALC
+
+    CU05 --> extends1["<extend>>"]
+    extends1 --> VALIDAR["Validar Topes de Deducción"]
