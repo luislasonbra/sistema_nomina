@@ -3,243 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prototipo Completo - Sistema de Nomina RD</title>
+<title>8. Prototipo de la Aplicacion Completa</title>
 <style>
-:root{--ink:#121722;--paper:#f3efe7;--panel:#ffffff;--line:#d8d2c7;--accent:#b33a2f;--blue:#2d69b3;--green:#2b7f52;--gold:#b3881e;--muted:#6f6a61}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f5f2ec 0%,#ece6da 100%);color:var(--ink)}
-.wrap{max-width:1320px;margin:0 auto;padding:24px}
-.hero{background:linear-gradient(140deg,#141926 0%,#22293a 100%);color:#fff;padding:28px;border-radius:24px;margin-bottom:24px}
-.hero h1,.hero h2,.hero h3{font-family:Georgia,"Times New Roman",serif}
-.hero p{max-width:780px;color:#d7dbea}
-.grid{display:grid;grid-template-columns:280px 1fr;gap:20px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(18,23,34,.06)}
-.nav{padding:20px;background:#171c29;color:#cbd2e4;min-height:100%}
-.nav h3{margin:0 0 16px;color:#fff}
-.nav .sec{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#7f889d;margin:18px 0 8px}
-.nav .item{padding:10px 12px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.03)}
-.content{padding:20px}
-.screen{border:1px solid var(--line);border-radius:18px;background:#fff;margin-bottom:20px;overflow:hidden}
-.screen .top{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:#fcfaf6}
-.screen .body{padding:18px}
-.tag{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
-.r{background:#f7dfdb;color:var(--accent)}.b{background:#dce8f7;color:var(--blue)}.g{background:#ddeee4;color:var(--green)}.y{background:#f4ead0;color:var(--gold)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
-.mini{font-size:12px;color:var(--muted)}
-.kpi{font-size:28px;font-weight:800;margin:6px 0}
-.table{width:100%;border-collapse:collapse;font-size:14px}
-.table th,.table td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
-.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.field{border:1px solid var(--line);border-radius:12px;padding:12px;background:#faf8f3}
-.field strong{display:block;font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.output{border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fcfbf8}
-.triple{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:980px){.grid,.triple{grid-template-columns:1fr}}
+:root{--ink:#16202c;--paper:#f4efe7;--panel:#fff;--soft:#faf7f2;--line:#d8d1c5;--accent:#b53d31;--blue:#2b69b5;--green:#237348;--muted:#6e675d}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f6f2eb,#ece4d7);color:var(--ink)}
+.wrap{max-width:1380px;margin:0 auto;padding:24px}.hero,.section{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:0 14px 34px rgba(22,32,44,.06)}
+.hero{padding:28px;margin-bottom:22px;background:linear-gradient(140deg,#16202c,#253147);color:#fff}.hero h1,.title{font-family:Georgia,"Times New Roman",serif}.hero p{max-width:900px;color:#dde3f0;line-height:1.6}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}.sum div{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);padding:14px;border-radius:14px}
+.section{padding:22px;margin-bottom:20px}.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}.title{margin:0;font-size:1.6rem}.tag{display:inline-block;padding:8px 12px;border-radius:999px;font-size:.78rem;font-weight:700}.r{background:#f7dfdb;color:var(--accent)}.b{background:#dde8f7;color:var(--blue)}.g{background:#dceee3;color:var(--green)}
+.two{display:grid;grid-template-columns:290px 1fr;gap:18px}.nav{background:#182130;color:#d2d8e8;border-radius:20px;padding:18px}.nav h3{margin:0 0 14px;color:#fff}.sec{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#808aa1;margin:14px 0 8px}.item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.card,.proto{border:1px solid var(--line);border-radius:18px;background:var(--soft)}.card{padding:14px}.card h4,.proto h4{margin:0 0 8px}.card p,.meta,.note p{color:var(--muted);line-height:1.55}
+.proto{overflow:hidden}.top{padding:14px 16px;border-bottom:1px solid var(--line);background:#fcfaf6}.body{padding:16px}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.field{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}.field strong{display:block;font-size:.72rem;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.table{width:100%;border-collapse:collapse;font-size:.9rem}.table th,.table td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}.table th{font-size:.75rem;text-transform:uppercase;color:var(--muted);background:#f7f3ec}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kpi{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}.kpi small{display:block;color:var(--muted)}.kpi strong{display:block;font-size:1.25rem;margin-top:6px}
+.explain{margin-top:12px;padding:12px 14px;border-left:4px solid var(--accent);background:#fcf5f3;border-radius:12px}.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}.note{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
+@media(max-width:980px){.two,.kpis{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <section class="hero">
     <h1>8. Prototipo de la Aplicacion Completa</h1>
-    <p>Este prototipo resume la aplicacion completa del proyecto Sistema de Nomina RD, incluyendo menu principal, modulos, entradas del sistema y salidas principales. Representa visualmente el comportamiento esperado de la solucion implementada.</p>
+    <p>Este prototipo organiza el sistema completo segun los tres apartados solicitados. Se presenta el menu principal y los modulos, las pantallas de entrada y las pantallas de salida del proyecto Sistema de Nomina RD, incluyendo autenticacion, configuracion, procesos y reportes.</p>
+    <div class="sum">
+      <div><strong>8.a</strong><br>Menu principal y modulos de la aplicacion.</div>
+      <div><strong>8.b</strong><br>Todas las entradas del sistema representadas como pantallas.</div>
+      <div><strong>8.c</strong><br>Todas las salidas del sistema representadas como pantallas.</div>
+    </div>
   </section>
 
-  <section class="grid">
-    <aside class="panel nav">
-      <h3>Menu principal</h3>
-      <div class="sec">Acceso</div>
-      <div class="item">Login</div>
-      <div class="item">Register user</div>
-      <div class="item">Forgot password</div>
-      <div class="item">Reset password</div>
-      <div class="sec">Principal</div>
-      <div class="item">Dashboard</div>
-      <div class="item">Empleados</div>
-      <div class="sec">Configuracion</div>
-      <div class="item">Departamentos</div>
-      <div class="item">Cargos</div>
-      <div class="item">Tipos de Deduccion</div>
-      <div class="sec">Operaciones</div>
-      <div class="item">Descuentos por Empleado</div>
-      <div class="item">Periodos</div>
-      <div class="item">Procesar Nomina</div>
-      <div class="sec">Analisis</div>
-      <div class="item">Reportes</div>
-    </aside>
-
-    <main class="content panel">
-      <div class="screen">
-        <div class="top">
-          <strong>Pantallas de autenticacion</strong>
-          <span class="tag r">Entradas</span>
-        </div>
-        <div class="body triple">
-          <div class="output">
-            <h3>Login</h3>
-            <p class="mini">Entrada de correo y contrasena para iniciar sesion.</p>
-            <div class="form">
-              <div class="field"><strong>Correo</strong>admin@nomina.local</div>
-              <div class="field"><strong>Contrasena</strong>******</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Register user</h3>
-            <p class="mini">Alta de nuevos usuarios del sistema.</p>
-            <div class="form">
-              <div class="field"><strong>Nombre</strong>Recursos Humanos</div>
-              <div class="field"><strong>Correo</strong>rrhh@nomina.local</div>
-              <div class="field"><strong>Contrasena</strong>******</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Forgot / Reset password</h3>
-            <p class="mini">Generacion de token temporal y formulario de nueva contrasena.</p>
-            <div class="form">
-              <div class="field"><strong>Correo</strong>usuario@empresa.com</div>
-              <div class="field"><strong>Token</strong>ABCD-1234</div>
-              <div class="field"><strong>Nueva clave</strong>******</div>
-            </div>
-          </div>
-        </div>
+  <section class="section">
+    <div class="head">
+      <div>
+        <h2 class="title">8.a Menu principal y modulos</h2>
+        <p>El sistema esta organizado por areas funcionales. El menu principal sirve como punto de acceso para cada modulo y divide claramente las tareas de seguridad, configuracion, operacion y analisis.</p>
       </div>
-
-      <div class="screen">
-        <div class="top">
-          <strong>Dashboard</strong>
-          <span class="tag b">Salida</span>
-        </div>
-        <div class="body">
-          <div class="cards">
-            <div class="card"><div class="mini">Empleados activos</div><div class="kpi">7</div></div>
-            <div class="card"><div class="mini">Masa salarial</div><div class="kpi">RD$ 417K</div></div>
-            <div class="card"><div class="mini">Departamentos</div><div class="kpi">5</div></div>
-            <div class="card"><div class="mini">Nominas procesadas</div><div class="kpi">0+</div></div>
-          </div>
-        </div>
+      <span class="tag b">Estructura funcional</span>
+    </div>
+    <div class="two">
+      <aside class="nav">
+        <h3>Menu principal</h3>
+        <div class="sec">Acceso</div>
+        <div class="item">Login</div>
+        <div class="item">Register user</div>
+        <div class="item">Forgot password</div>
+        <div class="item">Reset password</div>
+        <div class="sec">Principal</div>
+        <div class="item">Dashboard</div>
+        <div class="item">Empleados</div>
+        <div class="sec">Configuracion</div>
+        <div class="item">Departamentos</div>
+        <div class="item">Cargos</div>
+        <div class="item">Tipos de Deduccion</div>
+        <div class="sec">Operaciones</div>
+        <div class="item">Descuentos por Empleado</div>
+        <div class="item">Periodos</div>
+        <div class="item">Procesar Nomina</div>
+        <div class="sec">Analisis</div>
+        <div class="item">Reportes</div>
+      </aside>
+      <div class="grid">
+        <div class="card"><h4>Modulo de autenticacion</h4><p>Controla acceso, registro y recuperacion de contrasena. Protege todas las rutas operativas del sistema.</p></div>
+        <div class="card"><h4>Dashboard</h4><p>Muestra indicadores generales de empleados, masa salarial, departamentos y nominas procesadas.</p></div>
+        <div class="card"><h4>Empleados</h4><p>Permite registrar, consultar, editar y eliminar empleados con sus datos personales, cargo y salario.</p></div>
+        <div class="card"><h4>Departamentos</h4><p>Administra las areas funcionales de la empresa y sirve de base para cargos y reportes.</p></div>
+        <div class="card"><h4>Cargos</h4><p>Gestiona los puestos, niveles y rangos salariales asociados a cada departamento.</p></div>
+        <div class="card"><h4>Tipos de Deduccion</h4><p>Define deducciones obligatorias y opcionales que intervienen en el calculo de nomina.</p></div>
+        <div class="card"><h4>Descuentos por Empleado</h4><p>Permite asignar descuentos personalizados como prestamos, embargos o cooperativa.</p></div>
+        <div class="card"><h4>Periodos</h4><p>Crea y administra los periodos de nomina que luego se usan para calcular y procesar pagos.</p></div>
+        <div class="card"><h4>Procesar Nomina</h4><p>Calcula deducciones, muestra vista previa, procesa nomina y genera recibos de pago.</p></div>
+        <div class="card"><h4>Reportes</h4><p>Presenta salidas de consulta: resumen general, por departamento y por empleado.</p></div>
       </div>
+    </div>
+    <div class="notes">
+      <div class="note"><h4>Funcion del menu</h4><p>El menu principal organiza la navegacion y separa las funciones para que el usuario ubique rapidamente cada proceso.</p></div>
+      <div class="note"><h4>Relacion entre modulos</h4><p>Los modulos de configuracion alimentan a empleados y nomina; los modulos de proceso generan las salidas que consumen los reportes.</p></div>
+    </div>
+  </section>
 
-      <div class="screen">
-        <div class="top">
-          <strong>Modulo de Empleados</strong>
-          <span class="tag r">Entradas y salidas</span>
-        </div>
-        <div class="body">
-          <div class="form" style="margin-bottom:14px">
-            <div class="field"><strong>Nombres</strong>Maria</div>
-            <div class="field"><strong>Apellidos</strong>Gonzalez</div>
-            <div class="field"><strong>Cedula</strong>001-1234567-8</div>
-            <div class="field"><strong>Departamento</strong>RRHH</div>
-            <div class="field"><strong>Cargo</strong>Analista RRHH</div>
-            <div class="field"><strong>Salario</strong>35000</div>
-          </div>
-          <table class="table">
-            <thead><tr><th>Empleado</th><th>Cedula</th><th>Cargo</th><th>Salario</th><th>Estado</th></tr></thead>
-            <tbody>
-              <tr><td>Maria Gonzalez</td><td>001-1234567-8</td><td>Analista RRHH</td><td>RD$ 35,000</td><td>Activo</td></tr>
-              <tr><td>Juan Perez</td><td>001-2345678-9</td><td>Gerente de Ventas</td><td>RD$ 85,000</td><td>Activo</td></tr>
-            </tbody>
-          </table>
-        </div>
+  <section class="section">
+    <div class="head">
+      <div>
+        <h2 class="title">8.b Todas las entradas del sistema</h2>
+        <p>A continuacion se muestran las pantallas donde el usuario introduce datos o parametros. Cada una representa una entrada del sistema utilizada en los diferentes programas o modulos.</p>
       </div>
+      <span class="tag r">Pantallas de entrada</span>
+    </div>
+    <div class="grid">
+      <article class="proto"><div class="top"><h4>Pantalla 1. Login</h4></div><div class="body"><p class="meta">Entrada de credenciales del usuario.</p><div class="fields"><div class="field"><strong>Correo</strong>admin@nomina.local</div><div class="field"><strong>Contrasena</strong>******</div></div><div class="explain"><strong>Explicacion:</strong> permite iniciar sesion y habilitar el acceso a toda la aplicacion.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 2. Register user</h4></div><div class="body"><p class="meta">Alta de nuevos usuarios.</p><div class="fields"><div class="field"><strong>Nombre</strong>Recursos Humanos</div><div class="field"><strong>Correo</strong>rrhh@nomina.local</div><div class="field"><strong>Contrasena</strong>******</div></div><div class="explain"><strong>Explicacion:</strong> registra usuarios autorizados para usar el sistema.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 3. Forgot / Reset password</h4></div><div class="body"><p class="meta">Recuperacion de acceso.</p><div class="fields"><div class="field"><strong>Correo</strong>usuario@empresa.com</div><div class="field"><strong>Token</strong>ABCD-1234</div><div class="field"><strong>Nueva clave</strong>******</div></div><div class="explain"><strong>Explicacion:</strong> genera un token y permite definir una nueva contrasena.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 4. Empleados</h4></div><div class="body"><p class="meta">Formulario de registro y edicion de empleados.</p><div class="fields"><div class="field"><strong>Nombres</strong>Maria</div><div class="field"><strong>Apellidos</strong>Gonzalez</div><div class="field"><strong>Cedula</strong>001-1234567-8</div><div class="field"><strong>Departamento</strong>RRHH</div><div class="field"><strong>Cargo</strong>Analista RRHH</div><div class="field"><strong>Salario</strong>35000</div></div><div class="explain"><strong>Explicacion:</strong> esta pantalla captura los datos personales y laborales de cada empleado.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 5. Departamentos</h4></div><div class="body"><p class="meta">Mantenimiento de catalogo organizacional.</p><div class="fields"><div class="field"><strong>Nombre</strong>Tecnologia</div><div class="field"><strong>Codigo</strong>TEC</div><div class="field"><strong>Descripcion</strong>Sistemas e informatica</div></div><div class="explain"><strong>Explicacion:</strong> permite crear y editar areas de la empresa.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 6. Cargos</h4></div><div class="body"><p class="meta">Registro de puestos y rangos salariales.</p><div class="fields"><div class="field"><strong>Nombre</strong>Desarrollador Senior</div><div class="field"><strong>Departamento</strong>Tecnologia</div><div class="field"><strong>Nivel</strong>Tecnico</div><div class="field"><strong>Salario base</strong>60000</div></div><div class="explain"><strong>Explicacion:</strong> define los cargos que luego se asignan a los empleados.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 7. Tipos de Deduccion</h4></div><div class="body"><p class="meta">Configuracion de reglas de descuento.</p><div class="fields"><div class="field"><strong>Nombre</strong>AFP Empleado</div><div class="field"><strong>Tipo</strong>Porcentaje</div><div class="field"><strong>Valor</strong>2.87</div><div class="field"><strong>Obligatoria</strong>Si</div></div><div class="explain"><strong>Explicacion:</strong> captura las reglas maestras para deducciones automaticas y manuales.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 8. Descuentos por Empleado</h4></div><div class="body"><p class="meta">Asignacion individual de descuentos.</p><div class="fields"><div class="field"><strong>Empleado</strong>Juan Perez</div><div class="field"><strong>Concepto</strong>Prestamo personal</div><div class="field"><strong>Valor</strong>3000</div><div class="field"><strong>Estado</strong>Activo</div></div><div class="explain"><strong>Explicacion:</strong> registra descuentos particulares que afectan el neto del empleado.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 9. Periodos de nomina</h4></div><div class="body"><p class="meta">Creacion y mantenimiento de periodos.</p><div class="fields"><div class="field"><strong>Nombre</strong>Marzo 2025</div><div class="field"><strong>Inicio</strong>2025-03-01</div><div class="field"><strong>Fin</strong>2025-03-31</div><div class="field"><strong>Estado</strong>Abierto</div></div><div class="explain"><strong>Explicacion:</strong> define el marco temporal sobre el que se calcula la nomina.</div></div></article>
+      <article class="proto"><div class="top"><h4>Pantalla 10. Parametros para procesar nomina</h4></div><div class="body"><p class="meta">Entradas previas al proceso.</p><div class="fields"><div class="field"><strong>Periodo</strong>Marzo 2025</div><div class="field"><strong>Departamento</strong>Todos</div><div class="field"><strong>Accion</strong>Calcular / Procesar</div></div><div class="explain"><strong>Explicacion:</strong> establece el filtro y lanza el calculo o el procesamiento definitivo.</div></div></article>
+    </div>
+  </section>
 
-      <div class="screen">
-        <div class="top">
-          <strong>Modulos de configuracion</strong>
-          <span class="tag r">Entradas</span>
-        </div>
-        <div class="body triple">
-          <div class="output">
-            <h3>Departamentos</h3>
-            <div class="form">
-              <div class="field"><strong>Nombre</strong>Tecnologia</div>
-              <div class="field"><strong>Codigo</strong>TEC</div>
-              <div class="field"><strong>Descripcion</strong>Sistemas e informatica</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Cargos</h3>
-            <div class="form">
-              <div class="field"><strong>Nombre</strong>Desarrollador Senior</div>
-              <div class="field"><strong>Departamento</strong>Tecnologia</div>
-              <div class="field"><strong>Nivel</strong>Tecnico</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Tipos de deduccion</h3>
-            <div class="form">
-              <div class="field"><strong>Nombre</strong>AFP Empleado</div>
-              <div class="field"><strong>Tipo</strong>Porcentaje</div>
-              <div class="field"><strong>Valor</strong>2.87</div>
-            </div>
-          </div>
-        </div>
+  <section class="section">
+    <div class="head">
+      <div>
+        <h2 class="title">8.c Todas las salidas del sistema representadas usando pantallas</h2>
+        <p>Estas pantallas muestran resultados, consultas y documentos generados por el sistema. Son las principales salidas visibles para el usuario luego de capturar y procesar la informacion.</p>
       </div>
-
-      <div class="screen">
-        <div class="top">
-          <strong>Descuentos por Empleado y Periodos</strong>
-          <span class="tag r">Entradas</span>
-        </div>
-        <div class="body triple">
-          <div class="output">
-            <h3>Descuento individual</h3>
-            <div class="form">
-              <div class="field"><strong>Empleado</strong>Juan Perez</div>
-              <div class="field"><strong>Concepto</strong>Prestamo personal</div>
-              <div class="field"><strong>Valor</strong>3000</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Periodo de nomina</h3>
-            <div class="form">
-              <div class="field"><strong>Nombre</strong>Marzo 2025</div>
-              <div class="field"><strong>Inicio</strong>2025-03-01</div>
-              <div class="field"><strong>Fin</strong>2025-03-31</div>
-            </div>
-          </div>
-          <div class="output">
-            <h3>Filtros de proceso</h3>
-            <div class="form">
-              <div class="field"><strong>Periodo</strong>Marzo 2025</div>
-              <div class="field"><strong>Departamento</strong>Todos</div>
-              <div class="field"><strong>Accion</strong>Calcular / Procesar</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen">
-        <div class="top">
-          <strong>Salidas del sistema</strong>
-          <span class="tag g">Pantallas de salida</span>
-        </div>
-        <div class="body">
-          <div class="cards" style="margin-bottom:14px">
-            <div class="card"><div class="mini">Preview de nomina</div><div class="kpi">RD$ 417K</div><div class="mini">Bruto total</div></div>
-            <div class="card"><div class="mini">Descuentos</div><div class="kpi">RD$ 31K</div><div class="mini">Obligatorios + individuales</div></div>
-            <div class="card"><div class="mini">Neto total</div><div class="kpi">RD$ 386K</div><div class="mini">Monto a pagar</div></div>
-          </div>
-          <table class="table" style="margin-bottom:14px">
-            <thead><tr><th>Salida</th><th>Descripcion</th><th>Representacion</th></tr></thead>
-            <tbody>
-              <tr><td>Detalle de calculo</td><td>Tabla previa con salario, deducciones y neto por empleado</td><td>Pantalla del modulo Nomina</td></tr>
-              <tr><td>Historial</td><td>Listado de nominas procesadas por periodo</td><td>Pantalla tab Historial</td></tr>
-              <tr><td>Recibo de pago</td><td>Vista individual imprimible por empleado y periodo</td><td>Pantalla tab Recibo</td></tr>
-              <tr><td>Reportes</td><td>Resumen general, por departamento y por empleado</td><td>Pantalla modulo Reportes</td></tr>
-            </tbody>
-          </table>
-          <div class="output">
-            <h3>Recibo de pago</h3>
-            <p class="mini">Salida formal del sistema para consulta o impresion.</p>
-            <div class="form">
-              <div class="field"><strong>Empleado</strong>Maria Gonzalez</div>
-              <div class="field"><strong>Periodo</strong>Marzo 2025</div>
-              <div class="field"><strong>Neto</strong>RD$ 31,950</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+      <span class="tag g">Pantallas de salida</span>
+    </div>
+    <div class="grid">
+      <article class="proto"><div class="top"><h4>Salida 1. Dashboard principal</h4></div><div class="body"><p class="meta">Vista ejecutiva de indicadores.</p><div class="kpis"><div class="kpi"><small>Empleados activos</small><strong>7</strong></div><div class="kpi"><small>Masa salarial</small><strong>RD$ 417K</strong></div><div class="kpi"><small>Departamentos</small><strong>5</strong></div></div><div class="explain"><strong>Explicacion:</strong> ofrece una salida gerencial resumida del estado actual del sistema.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 2. Listado de empleados</h4></div><div class="body"><p class="meta">Consulta general de la plantilla.</p><table class="table"><thead><tr><th>Empleado</th><th>Cedula</th><th>Cargo</th><th>Salario</th><th>Estado</th></tr></thead><tbody><tr><td>Maria Gonzalez</td><td>001-1234567-8</td><td>Analista RRHH</td><td>35,000</td><td>Activo</td></tr><tr><td>Juan Perez</td><td>001-2345678-9</td><td>Gerente de Ventas</td><td>85,000</td><td>Activo</td></tr></tbody></table><div class="explain"><strong>Explicacion:</strong> muestra la informacion consolidada de los empleados registrados.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 3. Vista previa del calculo de nomina</h4></div><div class="body"><p class="meta">Resultado del calculo antes del procesamiento final.</p><table class="table"><thead><tr><th>Empleado</th><th>Base</th><th>Oblig.</th><th>Indiv.</th><th>Neto</th></tr></thead><tbody><tr><td>Maria Gonzalez</td><td>35,000</td><td>2,069</td><td>0</td><td>32,931</td></tr><tr><td>Juan Perez</td><td>85,000</td><td>8,775</td><td>3,000</td><td>73,225</td></tr></tbody></table><div class="explain"><strong>Explicacion:</strong> presenta los resultados del calculo por empleado y permite revisar antes de confirmar.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 4. Historial de nominas</h4></div><div class="body"><p class="meta">Consulta historica de procesos realizados.</p><table class="table"><thead><tr><th>Periodo</th><th>Empleados</th><th>Bruto</th><th>Neto</th><th>Estado</th></tr></thead><tbody><tr><td>Marzo 2025</td><td>7</td><td>417,000</td><td>386,000</td><td>Procesada</td></tr></tbody></table><div class="explain"><strong>Explicacion:</strong> permite consultar y verificar las nominas ya procesadas por periodo.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 5. Recibo de pago</h4></div><div class="body"><p class="meta">Documento individual del empleado.</p><div class="fields"><div class="field"><strong>Empleado</strong>Maria Gonzalez</div><div class="field"><strong>Periodo</strong>Marzo 2025</div><div class="field"><strong>Departamento</strong>RRHH</div><div class="field"><strong>Neto</strong>32,931</div></div><div class="explain"><strong>Explicacion:</strong> resume ingresos, deducciones y salario neto a pagar. Es una de las salidas mas importantes del sistema.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 6. Reporte resumen</h4></div><div class="body"><p class="meta">Consolidado general para analisis.</p><div class="kpis"><div class="kpi"><small>Empleados activos</small><strong>7</strong></div><div class="kpi"><small>Promedio salarial</small><strong>59K</strong></div><div class="kpi"><small>Descuentos activos</small><strong>3</strong></div></div><div class="explain"><strong>Explicacion:</strong> sirve como salida gerencial y muestra el comportamiento global del sistema.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 7. Reporte por departamento</h4></div><div class="body"><p class="meta">Distribucion de la masa salarial por area.</p><table class="table"><thead><tr><th>Departamento</th><th>Emps.</th><th>Total</th><th>%</th></tr></thead><tbody><tr><td>Administracion</td><td>1</td><td>130,000</td><td>31%</td></tr><tr><td>Ventas</td><td>2</td><td>107,000</td><td>26%</td></tr></tbody></table><div class="explain"><strong>Explicacion:</strong> permite comparar areas y analizar peso salarial por departamento.</div></div></article>
+      <article class="proto"><div class="top"><h4>Salida 8. Reporte por empleado</h4></div><div class="body"><p class="meta">Detalle individual del resultado salarial.</p><table class="table"><thead><tr><th>Empleado</th><th>Salario</th><th>Oblig.</th><th>Indiv.</th><th>Neto</th></tr></thead><tbody><tr><td>Juan Perez</td><td>85,000</td><td>8,775</td><td>3,000</td><td>73,225</td></tr><tr><td>Carlos Martinez</td><td>65,000</td><td>5,993</td><td>6,500</td><td>52,507</td></tr></tbody></table><div class="explain"><strong>Explicacion:</strong> muestra al detalle el salario y los descuentos por cada empleado.</div></div></article>
+    </div>
+    <div class="notes">
+      <div class="note"><h4>Resumen del apartado c</h4><p>Las salidas del sistema se materializan en indicadores, listados, historiales, reportes y recibos de pago.</p></div>
+      <div class="note"><h4>Valor del prototipo</h4><p>Esta separacion visual demuestra que el sistema no solo capta datos, sino que tambien produce informacion util para control, consulta y toma de decisiones.</p></div>
+    </div>
   </section>
 </div>
 </body>
