@@ -1,259 +1,247 @@
-# 🇩🇴 Sistema de Nómina RD — Flask + SQLite
+# Sistema de Nomina RD
 
-Sistema completo de nómina para la República Dominicana con Flask, SQLAlchemy y SQLite.
+Sistema de nomina para Republica Dominicana construido con Flask, SQLAlchemy, SQLite y una interfaz web en Bootstrap.
 
----
+## Resumen
 
-## 📁 Estructura del proyecto
+El proyecto incluye:
 
-```
-nominard/
-├── app.py           ← Servidor Flask + todas las rutas API REST
-├── models.py        ← Modelos de la base de datos (SQLAlchemy)
-├── seed.py          ← Script para poblar datos de ejemplo
-├── requirements.txt ← Dependencias Python
-├── nominard.db      ← Base de datos SQLite (se crea automáticamente)
+- Gestion de departamentos, cargos y empleados
+- Tipos de deduccion y descuentos por empleado
+- Periodos, calculo y procesamiento de nomina
+- Reportes y recibo de pago
+- Autenticacion de usuarios con `login`, `register`, `forgot password` y `reset password`
+- Seed de datos de ejemplo actualizado
+
+## Estructura del proyecto
+
+```text
+SistemaNomina/
+├── app.py
+├── models.py
+├── seed.py
+├── nominard.db
+├── nominard.db.sql
+├── requirements.txt
+├── README.md
 └── templates/
-    └── index.html   ← Frontend completo (Bootstrap 5 + JS)
+    └── index.html
 ```
 
----
+## Modelos principales
 
-## 🗃️ Diagrama de la Base de Datos
+La base de datos contiene estas tablas principales:
 
-```
-departamentos          cargos
-─────────────          ──────────────────────────────
-id (PK)                id (PK)
-nombre                 nombre
-codigo                 dept_id ──────────────────────→ departamentos.id
-descripcion            nivel
-creado_en              sal_base
-                       sal_max
-                       creado_en
+- `usuarios`
+- `departamentos`
+- `cargos`
+- `empleados`
+- `tipos_deduccion`
+- `descuentos_empleado`
+- `periodos`
+- `nominas`
+- `nominas_detalle`
 
-empleados
-─────────────────────────────────────
-id (PK)
-nombres
-apellidos
-cedula (UNIQUE)
-telefono
-email
-direccion
-ingreso
-dept_id ─────────────────────────────→ departamentos.id
-cargo_id ────────────────────────────→ cargos.id
-tipo           (fijo|por_hora|temporal)
-salario
-estado         (activo|inactivo|suspendido)
-creado_en
+## Instalacion
 
-tipos_deduccion                     descuentos_empleado
-─────────────────────────           ──────────────────────────────────
-id (PK)                             id (PK)
-nombre (UNIQUE)                     emp_id ──────────────→ empleados.id
-tipo    (porcentaje|fijo)           tipo_id ─────────────→ tipos_deduccion.id
-valor                               nombre
-aplica  (todos|fijo|por_hora)       tipo_val  (fijo|porcentaje)
-obligatoria (si|no)                 valor
-creado_en                           inicio
-                                    fin
-                                    cuotas
-                                    activo (si|no)
-                                    obs
-                                    creado_en
+### 1. Requisitos
 
-periodos                nominas                 nominas_detalle
-────────────────        ──────────────────      ──────────────────────────
-id (PK)                 id (PK)                 id (PK)
-nombre                  periodo_id ──→ periodos.id   nomina_id ──→ nominas.id
-tipo                    total_emps              emp_id ──────→ empleados.id
-inicio                  total_bruto             salario_base
-fin                     total_neto              dias
-dias                    fecha_proc              sal_calculado
-estado                  estado                  bonificacion
-creado_en               creado_en               desc_oblig
-                                                desc_indiv
-                                                total_desc
-                                                salario_neto
-```
-
----
-
-## 🚀 Instalación paso a paso
-
-### 1. Requisitos previos
 - Python 3.9 o superior
-- pip
+- `pip`
 
-Verificar:
+### 2. Crear entorno virtual
+
 ```bash
-python --version   # debe ser 3.9+
-pip --version
+python -m venv venv
 ```
 
-### 2. Crear entorno virtual (recomendado)
+Windows:
+
 ```bash
-# Crear el entorno
-python -m venv venv
-
-# Activar en Windows
 venv\Scripts\activate
+```
 
-# Activar en Mac/Linux
+Linux/macOS:
+
+```bash
 source venv/bin/activate
 ```
 
 ### 3. Instalar dependencias
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Crear la base de datos y poblar datos de ejemplo
+## Inicializar la base de datos
+
+Para crear o resembrar la base con datos de ejemplo:
+
 ```bash
 python seed.py
 ```
-Esto creará `nominard.db` con:
+
+`seed.py` ahora limpia los datos principales antes de insertar de nuevo, para evitar duplicados al re-ejecutarlo.
+
+### Datos demo creados por el seed
+
+- 2 usuarios
 - 5 departamentos
 - 8 cargos
-- 8 tipos de deducción (AFP, SFS, ISR, etc.)
-- 7 empleados de ejemplo
-- 3 descuentos individuales demo
-- 3 períodos de nómina
+- 8 tipos de deduccion
+- 7 empleados
+- 3 descuentos individuales
+- 3 periodos
 
-### 5. Ejecutar el servidor
+### Usuarios demo
+
+| Correo | Clave |
+|---|---|
+| `admin@nomina.local` | `admin123` |
+| `rrhh@nomina.local` | `rrhh123` |
+
+## Ejecutar la aplicacion
+
 ```bash
 python app.py
 ```
 
-### 6. Abrir en el navegador
-```
+Abrir en el navegador:
+
+```text
 http://localhost:5000
 ```
 
----
+## Flujo de autenticacion
 
-## 🔌 API REST — Endpoints
+La aplicacion ahora protege las rutas `/api/*` y exige sesion iniciada para acceder al sistema.
+
+Funciones disponibles:
+
+- `Login`
+- `Register user`
+- `Forgot password`
+- `Reset password`
+- `Logout`
+
+### Recuperacion de contrasena
+
+El flujo actual genera un token temporal desde la UI. Como el proyecto aun no envia correos, el token se muestra en pantalla para usarlo inmediatamente en el formulario de restablecimiento.
+
+## Endpoints principales
+
+### Auth
+
+| Metodo | Ruta | Descripcion |
+|---|---|---|
+| `GET` | `/api/auth/session` | Estado de la sesion actual |
+| `POST` | `/api/auth/register` | Crear usuario |
+| `POST` | `/api/auth/login` | Iniciar sesion |
+| `POST` | `/api/auth/logout` | Cerrar sesion |
+| `POST` | `/api/auth/forgot-password` | Generar token de recuperacion |
+| `POST` | `/api/auth/reset-password` | Cambiar contrasena con token |
 
 ### Departamentos
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/departamentos` | Listar todos |
-| POST   | `/api/departamentos` | Crear nuevo |
-| PUT    | `/api/departamentos/<id>` | Actualizar |
-| DELETE | `/api/departamentos/<id>` | Eliminar |
+
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/departamentos` |
+| `POST` | `/api/departamentos` |
+| `PUT` | `/api/departamentos/<id>` |
+| `DELETE` | `/api/departamentos/<id>` |
 
 ### Cargos
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/cargos?dept_id=N` | Listar (filtrar por depto.) |
-| POST   | `/api/cargos` | Crear nuevo |
-| PUT    | `/api/cargos/<id>` | Actualizar |
-| DELETE | `/api/cargos/<id>` | Eliminar |
+
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/cargos?dept_id=N` |
+| `POST` | `/api/cargos` |
+| `PUT` | `/api/cargos/<id>` |
+| `DELETE` | `/api/cargos/<id>` |
 
 ### Empleados
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/empleados?q=texto&estado=activo` | Listar con filtros |
-| GET    | `/api/empleados/<id>` | Obtener uno |
-| POST   | `/api/empleados` | Crear nuevo |
-| PUT    | `/api/empleados/<id>` | Actualizar |
-| DELETE | `/api/empleados/<id>` | Eliminar |
 
-### Tipos de Deducción
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/tipos-deduccion` | Listar todos |
-| POST   | `/api/tipos-deduccion` | Crear nuevo |
-| PUT    | `/api/tipos-deduccion/<id>` | Actualizar |
-| DELETE | `/api/tipos-deduccion/<id>` | Eliminar |
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/empleados?q=texto&estado=activo` |
+| `GET` | `/api/empleados/<id>` |
+| `POST` | `/api/empleados` |
+| `PUT` | `/api/empleados/<id>` |
+| `DELETE` | `/api/empleados/<id>` |
 
-### Descuentos por Empleado
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/descuentos?emp_id=N` | Listar (filtrar por empleado) |
-| POST   | `/api/descuentos` | Asignar descuento |
-| PUT    | `/api/descuentos/<id>` | Actualizar |
-| DELETE | `/api/descuentos/<id>` | Eliminar |
-| PATCH  | `/api/descuentos/<id>/toggle` | Activar/desactivar |
+### Tipos de deduccion
 
-### Períodos
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/periodos` | Listar todos |
-| POST   | `/api/periodos` | Crear nuevo |
-| PUT    | `/api/periodos/<id>` | Actualizar |
-| DELETE | `/api/periodos/<id>` | Eliminar |
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/tipos-deduccion` |
+| `POST` | `/api/tipos-deduccion` |
+| `PUT` | `/api/tipos-deduccion/<id>` |
+| `DELETE` | `/api/tipos-deduccion/<id>` |
 
-### Nómina
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST   | `/api/nomina/calcular` | Calcular (sin guardar) |
-| POST   | `/api/nomina/procesar` | Procesar y guardar |
-| GET    | `/api/nomina/historial` | Historial procesadas |
-| GET    | `/api/nomina/recibo?emp_id=N&periodo_id=N` | Recibo de pago |
+### Descuentos
+
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/descuentos?emp_id=N` |
+| `POST` | `/api/descuentos` |
+| `PUT` | `/api/descuentos/<id>` |
+| `DELETE` | `/api/descuentos/<id>` |
+| `PATCH` | `/api/descuentos/<id>/toggle` |
+
+### Periodos
+
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/periodos` |
+| `POST` | `/api/periodos` |
+| `PUT` | `/api/periodos/<id>` |
+| `DELETE` | `/api/periodos/<id>` |
+
+### Nomina
+
+| Metodo | Ruta |
+|---|---|
+| `POST` | `/api/nomina/calcular` |
+| `POST` | `/api/nomina/procesar` |
+| `GET` | `/api/nomina/historial` |
+| `GET` | `/api/nomina/recibo?emp_id=N&periodo_id=N` |
 
 ### Reportes
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET    | `/api/reportes/resumen` | Resumen general |
-| GET    | `/api/reportes/por-departamento` | Por departamento |
-| GET    | `/api/reportes/por-empleado?q=texto` | Por empleado |
 
----
+| Metodo | Ruta |
+|---|---|
+| `GET` | `/api/reportes/resumen` |
+| `GET` | `/api/reportes/por-departamento` |
+| `GET` | `/api/reportes/por-empleado?q=texto` |
 
-## 🔄 Migrar a PostgreSQL / MySQL
+## Cambios recientes
 
-Solo cambia la línea de conexión en `app.py`:
+- Se agrego autenticacion de usuarios en backend y frontend
+- Se incorporo la tabla `usuarios` en el modelo y en el SQL base
+- Se actualizo `seed.py` para crear usuarios demo y permitir re-ejecucion segura
+- Se ajusto la UI para mostrar login/registro/recuperacion antes de entrar al sistema
+- Se corrigio la logica de tabs para limpiar el contenido anterior al cambiar entre paneles
 
-```python
-# SQLite (por defecto, ideal para desarrollo)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///nominard.db"
+## Archivo SQL
 
-# PostgreSQL
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://user:password@localhost/nominard"
+El archivo [nominard.db.sql](./nominard.db.sql) incluye la estructura actualizada, incluyendo la tabla `usuarios`.
 
-# MySQL
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://user:password@localhost/nominard"
-```
+## Comandos utiles
 
-Instalar el driver correspondiente:
-```bash
-pip install psycopg2-binary  # PostgreSQL
-pip install pymysql          # MySQL
-```
-
----
-
-## 📝 Escala ISR República Dominicana (2024-2025)
-
-| Renta Anual | Tasa |
-|-------------|------|
-| Hasta RD$ 416,220 | Exento |
-| RD$ 416,220 – RD$ 624,329 | 15% |
-| RD$ 624,329 – RD$ 867,123 | 20% |
-| Más de RD$ 867,123 | 25% |
-
-AFP Empleado: **2.87%** del salario  
-SFS Empleado: **3.04%** del salario
-
----
-
-## 🛠️ Comandos útiles
+Ejecutar la aplicacion:
 
 ```bash
-# Ejecutar en modo producción con Gunicorn
-pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
+python app.py
+```
 
-# Resetear la base de datos
-rm nominard.db
+Resembrar la base:
+
+```bash
 python seed.py
+```
 
-# Ver la BD con SQLite CLI
-sqlite3 nominard.db
-.tables
-SELECT * FROM empleados;
-.quit
+Compilar y verificar archivos Python:
+
+```bash
+python -m py_compile app.py models.py seed.py
 ```

@@ -107,6 +107,18 @@ CREATE TABLE IF NOT EXISTS tipos_deduccion (
 	PRIMARY KEY (id), 
 	UNIQUE (nombre)
 );
+CREATE TABLE IF NOT EXISTS usuarios (
+	id INTEGER NOT NULL, 
+	nombre VARCHAR(120) NOT NULL, 
+	email VARCHAR(120) NOT NULL, 
+	password_hash VARCHAR(255) NOT NULL, 
+	reset_token VARCHAR(120), 
+	reset_expira DATETIME, 
+	activo VARCHAR(3), 
+	creado_en DATETIME, 
+	PRIMARY KEY (id), 
+	UNIQUE (email)
+);
 INSERT INTO "cargos" ("id","nombre","dept_id","nivel","sal_base","sal_max","creado_en") VALUES (1,'Gerente General',1,'directivo',120000,150000,'2026-04-11 17:14:14.112388'),
  (2,'Asistente Administrativo',1,'operativo',25000,35000,'2026-04-11 17:14:14.112390'),
  (3,'Gerente de Ventas',2,'gerencial',80000,100000,'2026-04-11 17:14:14.112391'),
@@ -141,4 +153,6 @@ INSERT INTO "tipos_deduccion" ("id","nombre","tipo","valor","aplica","obligatori
  (6,'Embargo','porcentaje',0,'todos','no','2026-04-11 17:14:14.113531'),
  (7,'Seguro Médico','fijo',0,'todos','no','2026-04-11 17:14:14.113532'),
  (8,'Ahorro Voluntario','porcentaje',0,'todos','no','2026-04-11 17:14:14.113533');
+INSERT INTO "usuarios" ("id","nombre","email","password_hash","reset_token","reset_expira","activo","creado_en") VALUES (1,'Administrador General','admin@nomina.local','scrypt:32768:8:1$NJXpfRdEDs8aSUyS$603268dc08c15bc792c3855aacec9c50e2f4fff7146c9ed05b70a0b8b604159ae4d4c960b3934aa3ea9abb88e8eaf694a13b8a97f9bba56188910554132259a7',NULL,NULL,'si','2026-04-14 12:00:00.000000'),
+ (2,'Recursos Humanos','rrhh@nomina.local','scrypt:32768:8:1$6QzD0qPs6wE1kgBx$89ef7919123cd390488bb1a3342e36bb8edb5af0aaa19370122beea03d55e143c28245bbfe1c81a6301d15360d070bb83b3d01a9d777919416e788423c02cafa',NULL,NULL,'si','2026-04-14 12:00:00.000000');
 COMMIT;
