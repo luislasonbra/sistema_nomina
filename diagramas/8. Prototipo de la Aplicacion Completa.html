@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Completo - Sistema de Nomina RD</title>
+<style>
+:root{--ink:#121722;--paper:#f3efe7;--panel:#ffffff;--line:#d8d2c7;--accent:#b33a2f;--blue:#2d69b3;--green:#2b7f52;--gold:#b3881e;--muted:#6f6a61}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,#f5f2ec 0%,#ece6da 100%);color:var(--ink)}
+.wrap{max-width:1320px;margin:0 auto;padding:24px}
+.hero{background:linear-gradient(140deg,#141926 0%,#22293a 100%);color:#fff;padding:28px;border-radius:24px;margin-bottom:24px}
+.hero h1,.hero h2,.hero h3{font-family:Georgia,"Times New Roman",serif}
+.hero p{max-width:780px;color:#d7dbea}
+.grid{display:grid;grid-template-columns:280px 1fr;gap:20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(18,23,34,.06)}
+.nav{padding:20px;background:#171c29;color:#cbd2e4;min-height:100%}
+.nav h3{margin:0 0 16px;color:#fff}
+.nav .sec{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#7f889d;margin:18px 0 8px}
+.nav .item{padding:10px 12px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.03)}
+.content{padding:20px}
+.screen{border:1px solid var(--line);border-radius:18px;background:#fff;margin-bottom:20px;overflow:hidden}
+.screen .top{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:#fcfaf6}
+.screen .body{padding:18px}
+.tag{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.r{background:#f7dfdb;color:var(--accent)}.b{background:#dce8f7;color:var(--blue)}.g{background:#ddeee4;color:var(--green)}.y{background:#f4ead0;color:var(--gold)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.mini{font-size:12px;color:var(--muted)}
+.kpi{font-size:28px;font-weight:800;margin:6px 0}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table th,.table td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.field{border:1px solid var(--line);border-radius:12px;padding:12px;background:#faf8f3}
+.field strong{display:block;font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.output{border:1px dashed var(--line);border-radius:14px;padding:14px;background:#fcfbf8}
+.triple{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:980px){.grid,.triple{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>8. Prototipo de la Aplicacion Completa</h1>
+    <p>Este prototipo resume la aplicacion completa del proyecto Sistema de Nomina RD, incluyendo menu principal, modulos, entradas del sistema y salidas principales. Representa visualmente el comportamiento esperado de la solucion implementada.</p>
+  </section>
+
+  <section class="grid">
+    <aside class="panel nav">
+      <h3>Menu principal</h3>
+      <div class="sec">Acceso</div>
+      <div class="item">Login</div>
+      <div class="item">Register user</div>
+      <div class="item">Forgot password</div>
+      <div class="item">Reset password</div>
+      <div class="sec">Principal</div>
+      <div class="item">Dashboard</div>
+      <div class="item">Empleados</div>
+      <div class="sec">Configuracion</div>
+      <div class="item">Departamentos</div>
+      <div class="item">Cargos</div>
+      <div class="item">Tipos de Deduccion</div>
+      <div class="sec">Operaciones</div>
+      <div class="item">Descuentos por Empleado</div>
+      <div class="item">Periodos</div>
+      <div class="item">Procesar Nomina</div>
+      <div class="sec">Analisis</div>
+      <div class="item">Reportes</div>
+    </aside>
+
+    <main class="content panel">
+      <div class="screen">
+        <div class="top">
+          <strong>Pantallas de autenticacion</strong>
+          <span class="tag r">Entradas</span>
+        </div>
+        <div class="body triple">
+          <div class="output">
+            <h3>Login</h3>
+            <p class="mini">Entrada de correo y contrasena para iniciar sesion.</p>
+            <div class="form">
+              <div class="field"><strong>Correo</strong>admin@nomina.local</div>
+              <div class="field"><strong>Contrasena</strong>******</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Register user</h3>
+            <p class="mini">Alta de nuevos usuarios del sistema.</p>
+            <div class="form">
+              <div class="field"><strong>Nombre</strong>Recursos Humanos</div>
+              <div class="field"><strong>Correo</strong>rrhh@nomina.local</div>
+              <div class="field"><strong>Contrasena</strong>******</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Forgot / Reset password</h3>
+            <p class="mini">Generacion de token temporal y formulario de nueva contrasena.</p>
+            <div class="form">
+              <div class="field"><strong>Correo</strong>usuario@empresa.com</div>
+              <div class="field"><strong>Token</strong>ABCD-1234</div>
+              <div class="field"><strong>Nueva clave</strong>******</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="top">
+          <strong>Dashboard</strong>
+          <span class="tag b">Salida</span>
+        </div>
+        <div class="body">
+          <div class="cards">
+            <div class="card"><div class="mini">Empleados activos</div><div class="kpi">7</div></div>
+            <div class="card"><div class="mini">Masa salarial</div><div class="kpi">RD$ 417K</div></div>
+            <div class="card"><div class="mini">Departamentos</div><div class="kpi">5</div></div>
+            <div class="card"><div class="mini">Nominas procesadas</div><div class="kpi">0+</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="top">
+          <strong>Modulo de Empleados</strong>
+          <span class="tag r">Entradas y salidas</span>
+        </div>
+        <div class="body">
+          <div class="form" style="margin-bottom:14px">
+            <div class="field"><strong>Nombres</strong>Maria</div>
+            <div class="field"><strong>Apellidos</strong>Gonzalez</div>
+            <div class="field"><strong>Cedula</strong>001-1234567-8</div>
+            <div class="field"><strong>Departamento</strong>RRHH</div>
+            <div class="field"><strong>Cargo</strong>Analista RRHH</div>
+            <div class="field"><strong>Salario</strong>35000</div>
+          </div>
+          <table class="table">
+            <thead><tr><th>Empleado</th><th>Cedula</th><th>Cargo</th><th>Salario</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>Maria Gonzalez</td><td>001-1234567-8</td><td>Analista RRHH</td><td>RD$ 35,000</td><td>Activo</td></tr>
+              <tr><td>Juan Perez</td><td>001-2345678-9</td><td>Gerente de Ventas</td><td>RD$ 85,000</td><td>Activo</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="top">
+          <strong>Modulos de configuracion</strong>
+          <span class="tag r">Entradas</span>
+        </div>
+        <div class="body triple">
+          <div class="output">
+            <h3>Departamentos</h3>
+            <div class="form">
+              <div class="field"><strong>Nombre</strong>Tecnologia</div>
+              <div class="field"><strong>Codigo</strong>TEC</div>
+              <div class="field"><strong>Descripcion</strong>Sistemas e informatica</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Cargos</h3>
+            <div class="form">
+              <div class="field"><strong>Nombre</strong>Desarrollador Senior</div>
+              <div class="field"><strong>Departamento</strong>Tecnologia</div>
+              <div class="field"><strong>Nivel</strong>Tecnico</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Tipos de deduccion</h3>
+            <div class="form">
+              <div class="field"><strong>Nombre</strong>AFP Empleado</div>
+              <div class="field"><strong>Tipo</strong>Porcentaje</div>
+              <div class="field"><strong>Valor</strong>2.87</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="top">
+          <strong>Descuentos por Empleado y Periodos</strong>
+          <span class="tag r">Entradas</span>
+        </div>
+        <div class="body triple">
+          <div class="output">
+            <h3>Descuento individual</h3>
+            <div class="form">
+              <div class="field"><strong>Empleado</strong>Juan Perez</div>
+              <div class="field"><strong>Concepto</strong>Prestamo personal</div>
+              <div class="field"><strong>Valor</strong>3000</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Periodo de nomina</h3>
+            <div class="form">
+              <div class="field"><strong>Nombre</strong>Marzo 2025</div>
+              <div class="field"><strong>Inicio</strong>2025-03-01</div>
+              <div class="field"><strong>Fin</strong>2025-03-31</div>
+            </div>
+          </div>
+          <div class="output">
+            <h3>Filtros de proceso</h3>
+            <div class="form">
+              <div class="field"><strong>Periodo</strong>Marzo 2025</div>
+              <div class="field"><strong>Departamento</strong>Todos</div>
+              <div class="field"><strong>Accion</strong>Calcular / Procesar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen">
+        <div class="top">
+          <strong>Salidas del sistema</strong>
+          <span class="tag g">Pantallas de salida</span>
+        </div>
+        <div class="body">
+          <div class="cards" style="margin-bottom:14px">
+            <div class="card"><div class="mini">Preview de nomina</div><div class="kpi">RD$ 417K</div><div class="mini">Bruto total</div></div>
+            <div class="card"><div class="mini">Descuentos</div><div class="kpi">RD$ 31K</div><div class="mini">Obligatorios + individuales</div></div>
+            <div class="card"><div class="mini">Neto total</div><div class="kpi">RD$ 386K</div><div class="mini">Monto a pagar</div></div>
+          </div>
+          <table class="table" style="margin-bottom:14px">
+            <thead><tr><th>Salida</th><th>Descripcion</th><th>Representacion</th></tr></thead>
+            <tbody>
+              <tr><td>Detalle de calculo</td><td>Tabla previa con salario, deducciones y neto por empleado</td><td>Pantalla del modulo Nomina</td></tr>
+              <tr><td>Historial</td><td>Listado de nominas procesadas por periodo</td><td>Pantalla tab Historial</td></tr>
+              <tr><td>Recibo de pago</td><td>Vista individual imprimible por empleado y periodo</td><td>Pantalla tab Recibo</td></tr>
+              <tr><td>Reportes</td><td>Resumen general, por departamento y por empleado</td><td>Pantalla modulo Reportes</td></tr>
+            </tbody>
+          </table>
+          <div class="output">
+            <h3>Recibo de pago</h3>
+            <p class="mini">Salida formal del sistema para consulta o impresion.</p>
+            <div class="form">
+              <div class="field"><strong>Empleado</strong>Maria Gonzalez</div>
+              <div class="field"><strong>Periodo</strong>Marzo 2025</div>
+              <div class="field"><strong>Neto</strong>RD$ 31,950</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+</div>
+</body>
+</html>

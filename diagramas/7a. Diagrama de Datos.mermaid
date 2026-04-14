@@ -1,0 +1,117 @@
+erDiagram
+    USUARIOS {
+        int id PK
+        string nombre
+        string email UK
+        string password_hash
+        string reset_token
+        datetime reset_expira
+        string activo
+        datetime creado_en
+    }
+
+    DEPARTAMENTOS {
+        int id PK
+        string nombre UK
+        string codigo UK
+        string descripcion
+        datetime creado_en
+    }
+
+    CARGOS {
+        int id PK
+        string nombre
+        int dept_id FK
+        string nivel
+        decimal sal_base
+        decimal sal_max
+        datetime creado_en
+    }
+
+    EMPLEADOS {
+        int id PK
+        string nombres
+        string apellidos
+        string cedula UK
+        string telefono
+        string email
+        string direccion
+        date ingreso
+        int dept_id FK
+        int cargo_id FK
+        string tipo
+        decimal salario
+        string estado
+        datetime creado_en
+    }
+
+    TIPOS_DEDUCCION {
+        int id PK
+        string nombre UK
+        string tipo
+        decimal valor
+        string aplica
+        string obligatoria
+        datetime creado_en
+    }
+
+    DESCUENTOS_EMPLEADO {
+        int id PK
+        int emp_id FK
+        int tipo_id FK
+        string nombre
+        string tipo_val
+        decimal valor
+        date inicio
+        date fin
+        int cuotas
+        string activo
+        string obs
+        datetime creado_en
+    }
+
+    PERIODOS {
+        int id PK
+        string nombre
+        string tipo
+        date inicio
+        date fin
+        int dias
+        string estado
+        datetime creado_en
+    }
+
+    NOMINAS {
+        int id PK
+        int periodo_id FK
+        int total_emps
+        decimal total_bruto
+        decimal total_neto
+        date fecha_proc
+        string estado
+        datetime creado_en
+    }
+
+    NOMINAS_DETALLE {
+        int id PK
+        int nomina_id FK
+        int emp_id FK
+        decimal salario_base
+        int dias
+        decimal sal_calculado
+        decimal bonificacion
+        decimal desc_oblig
+        decimal desc_indiv
+        decimal total_desc
+        decimal salario_neto
+    }
+
+    DEPARTAMENTOS ||--o{ CARGOS : tiene
+    DEPARTAMENTOS ||--o{ EMPLEADOS : agrupa
+    CARGOS ||--o{ EMPLEADOS : asigna
+    EMPLEADOS ||--o{ DESCUENTOS_EMPLEADO : recibe
+    TIPOS_DEDUCCION ||--o{ DESCUENTOS_EMPLEADO : clasifica
+    PERIODOS ||--o{ NOMINAS : genera
+    NOMINAS ||--o{ NOMINAS_DETALLE : contiene
+    EMPLEADOS ||--o{ NOMINAS_DETALLE : participa
+

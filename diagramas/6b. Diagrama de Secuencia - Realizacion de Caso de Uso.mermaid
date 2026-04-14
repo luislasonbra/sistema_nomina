@@ -1,0 +1,48 @@
+sequenceDiagram
+    actor U as Usuario autenticado
+    participant UI as Pantalla Nomina
+    participant AUTH as Auth Middleware
+    participant API as NominaController
+    participant PER as Periodo
+    participant EMP as Empleado
+    participant DED as Motor de Deducciones
+    participant NOM as Nomina/NominaDetalle
+    participant DB as Base de Datos
+
+    U->>UI: Iniciar sesion y abrir modulo Procesar Nomina
+    UI->>AUTH: Solicitar recursos /api/*
+    AUTH->>DB: Validar session user_id
+    DB-->>AUTH: Usuario valido
+    AUTH-->>UI: Acceso permitido
+
+    U->>UI: Seleccionar periodo y pulsar Calcular
+    UI->>API: POST /api/nomina/calcular
+    API->>PER: Buscar periodo
+    PER->>DB: SELECT periodo
+    DB-->>PER: Datos del periodo
+    API->>EMP: Consultar empleados activos
+    EMP->>DB: SELECT empleados
+    DB-->>EMP: Lista de empleados
+
+    loop Por cada empleado
+        API->>DED: Calcular salario y deducciones
+        DED->>DB: Consultar tipos obligatorios y descuentos individuales
+        DB-->>DED: Datos de deducciones
+        DED-->>API: Totales por empleado
+    end
+
+    API-->>UI: Detalle de calculo y totales
+    UI-->>U: Mostrar preview de nomina
+
+    U->>UI: Pulsar Procesar
+    UI->>API: POST /api/nomina/procesar
+    API->>PER: Validar estado del periodo
+    API->>NOM: Crear encabezado y detalles
+    NOM->>DB: DELETE nomina previa del periodo
+    NOM->>DB: INSERT nomina
+    NOM->>DB: INSERT nominas_detalle
+    API->>DB: UPDATE periodos.estado='procesado'
+    DB-->>API: Confirmacion
+    API-->>UI: Nomina procesada correctamente
+    UI-->>U: Mostrar mensaje de exito e historial actualizado
+

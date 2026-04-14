@@ -1,0 +1,106 @@
+classDiagram
+    class Usuario {
+        +id: int
+        +nombre: string
+        +email: string
+        +password_hash: string
+        +activo: string
+        +to_safe_dict()
+    }
+
+    class AuthMiddleware {
+        +protect_api()
+        +current_user()
+    }
+
+    class PantallaNomina {
+        +renderNominaPage()
+        +calcNomina()
+        +procesarNomina()
+        +renderHistorial()
+        +genRecibo()
+    }
+
+    class NominaController {
+        +calcular_nomina()
+        +procesar_nomina()
+        +historial_nominas()
+        +recibo_pago()
+    }
+
+    class Periodo {
+        +id: int
+        +nombre: string
+        +tipo: string
+        +inicio: date
+        +fin: date
+        +dias: int
+        +estado: string
+    }
+
+    class Empleado {
+        +id: int
+        +nombres: string
+        +apellidos: string
+        +tipo: string
+        +salario: decimal
+        +estado: string
+    }
+
+    class TipoDeduccion {
+        +id: int
+        +nombre: string
+        +tipo: string
+        +valor: decimal
+        +aplica: string
+        +obligatoria: string
+    }
+
+    class DescuentoEmpleado {
+        +id: int
+        +emp_id: int
+        +nombre: string
+        +tipo_val: string
+        +valor: decimal
+        +activo: string
+    }
+
+    class Nomina {
+        +id: int
+        +periodo_id: int
+        +total_emps: int
+        +total_bruto: decimal
+        +total_neto: decimal
+        +estado: string
+    }
+
+    class NominaDetalle {
+        +id: int
+        +nomina_id: int
+        +emp_id: int
+        +salario_base: decimal
+        +desc_oblig: decimal
+        +desc_indiv: decimal
+        +salario_neto: decimal
+    }
+
+    class MotorDeducciones {
+        +calcular_isr()
+        +calcular_deducciones_obligatorias()
+        +calcular_deducciones_individuales()
+    }
+
+    PantallaNomina --> NominaController
+    AuthMiddleware --> Usuario
+    NominaController --> Periodo
+    NominaController --> Empleado
+    NominaController --> Nomina
+    NominaController --> NominaDetalle
+    NominaController --> MotorDeducciones
+    MotorDeducciones --> TipoDeduccion
+    MotorDeducciones --> DescuentoEmpleado
+    Nomina "1" --> "*" NominaDetalle
+    Periodo "1" --> "*" Nomina
+    Empleado "1" --> "*" NominaDetalle
+    Empleado "1" --> "*" DescuentoEmpleado
+
