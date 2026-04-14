@@ -8,6 +8,27 @@ from datetime import datetime, date
 db = SQLAlchemy()
 
 
+class Usuario(db.Model):
+    __tablename__ = "usuarios"
+
+    id            = db.Column(db.Integer, primary_key=True)
+    nombre        = db.Column(db.String(120), nullable=False)
+    email         = db.Column(db.String(120), nullable=False, unique=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    reset_token   = db.Column(db.String(120))
+    reset_expira  = db.Column(db.DateTime)
+    activo        = db.Column(db.String(3), default="si")
+    creado_en     = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_safe_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "email": self.email,
+            "activo": self.activo,
+        }
+
+
 # ─────────────────────────────────────────
 #  DEPARTAMENTO
 # ─────────────────────────────────────────

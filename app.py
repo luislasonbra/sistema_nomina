@@ -2,13 +2,15 @@
 app.py
 API REST + servidor del frontend para el Sistema de Nómina RD
 """
-from flask import Flask, jsonify, request, render_template, abort
+from flask import Flask, jsonify, request, render_template, abort, session, g
 from flask_cors import CORS
-from models import (db, Departamento, Cargo, Empleado,
+from models import (db, Usuario, Departamento, Cargo, Empleado,
                     TipoDeduccion, DescuentoEmpleado,
                     Periodo, Nomina, NominaDetalle)
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
+from secrets import token_urlsafe
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
@@ -19,6 +21,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(BASE_DIR, "nominard.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "nomina-rd-secret-2025"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
 
 db.init_app(app)
 
@@ -91,12 +94,140 @@ def err(msg, code=400):
     return jsonify({"error": msg}), code
 
 
+def current_user():
+    user_id = session.get("user_id")
+    if not user_id:
+        return None
+    return Usuario.query.get(user_id)
+
+
+def auth_payload(user):
+    return user.to_safe_dict() if user else None
+
+
+@app.before_request
+def protect_api():
+    g.user = current_user()
+    if request.path.startswith("/api/") and not request.path.startswith("/api/auth/"):
+        if not g.user:
+            return err("Debes iniciar sesión para continuar", 401)
+
+
+# ════════════════════════════════════════════════════════════════════════
+#  AUTH
+# ════════════════════════════════════════════════════════════════════════
+@app.route("/api/auth/session", methods=["GET"])
+def auth_session():
+    return jsonify({
+        "authenticated": g.user is not None,
+        "user": auth_payload(g.user),
+    })
+
+
+@app.route("/api/auth/register", methods=["POST"])
+def auth_register():
+    data = request.get_json() or {}
+    nombre = (data.get("nombre") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not nombre or not email or not password:
+        return err("Nombre, correo y contraseña son requeridos")
+    if len(password) < 6:
+        return err("La contraseña debe tener al menos 6 caracteres")
+    if Usuario.query.filter_by(email=email).first():
+        return err("Ya existe un usuario con ese correo")
+
+    user = Usuario(
+        nombre=nombre,
+        email=email,
+        password_hash=generate_password_hash(password),
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    session.permanent = True
+    session["user_id"] = user.id
+    return jsonify({"ok": True, "user": auth_payload(user)}), 201
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def auth_login():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    user = Usuario.query.filter_by(email=email).first()
+
+    if not user or not check_password_hash(user.password_hash, password):
+        return err("Correo o contraseña inválidos", 401)
+    if user.activo != "si":
+        return err("Este usuario está inactivo", 403)
+
+    session.permanent = True
+    session["user_id"] = user.id
+    return jsonify({"ok": True, "user": auth_payload(user)})
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def auth_logout():
+    session.pop("user_id", None)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/forgot-password", methods=["POST"])
+def auth_forgot_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+    user = Usuario.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({
+            "ok": True,
+            "message": "Si el correo existe, podrás restablecer la contraseña.",
+        })
+
+    token = token_urlsafe(16)
+    user.reset_token = token
+    user.reset_expira = datetime.utcnow() + timedelta(minutes=30)
+    db.session.commit()
+
+    return jsonify({
+        "ok": True,
+        "message": "Se generó un token temporal de recuperación.",
+        "reset_token": token,
+        "expires_in_minutes": 30,
+    })
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def auth_reset_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+    token = (data.get("token") or "").strip()
+    password = data.get("password") or ""
+
+    if not email or not token or not password:
+        return err("Correo, token y nueva contraseña son requeridos")
+    if len(password) < 6:
+        return err("La nueva contraseña debe tener al menos 6 caracteres")
+
+    user = Usuario.query.filter_by(email=email, reset_token=token).first()
+    if not user or not user.reset_expira or user.reset_expira < datetime.utcnow():
+        return err("El token es inválido o ya expiró", 400)
+
+    user.password_hash = generate_password_hash(password)
+    user.reset_token = None
+    user.reset_expira = None
+    db.session.commit()
+    return jsonify({"ok": True, "message": "Contraseña actualizada correctamente"})
+
+
 # ════════════════════════════════════════════════════════════════
 #  FRONTEND
 # ════════════════════════════════════════════════════════════════
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", auth_user=auth_payload(g.user))
 
 
 # ════════════════════════════════════════════════════════════════

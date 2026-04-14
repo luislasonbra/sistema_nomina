@@ -119,12 +119,110 @@ h1,h2,h3,h4,h5,h6,.ff{font-family:'Syne',sans-serif;}
 .bc .b{width:100%;border-radius:3px 3px 0 0;min-height:3px;background:var(--border);}
 .bc .b.on{background:var(--accent);}
 .bc .l{font-size:.6rem;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;}
+.auth-shell{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px;background:
+radial-gradient(circle at top left, rgba(192,57,43,.16), transparent 30%),
+radial-gradient(circle at bottom right, rgba(26,111,196,.12), transparent 28%),
+linear-gradient(135deg, #f4f1eb 0%, #ebe4d6 100%);}
+.auth-shell.on{display:flex;}
+.auth-wrap{width:min(980px,100%);display:grid;grid-template-columns:1.1fr .9fr;background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:1px solid rgba(216,211,200,.9);border-radius:26px;overflow:hidden;box-shadow:0 28px 70px rgba(15,17,23,.12);}
+.auth-side{padding:42px;background:linear-gradient(160deg, #11141d 0%, #1d2230 100%);color:#f6f2eb;display:flex;flex-direction:column;justify-content:space-between;gap:24px;}
+.auth-side h1{font-size:2.3rem;line-height:1.02;margin:0 0 12px;}
+.auth-side p{margin:0;color:#b9bdca;font-size:.95rem;max-width:420px;}
+.auth-mark{display:grid;gap:14px;}
+.auth-mark .hl{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);}
+.auth-panel{padding:34px;background:#fff;}
+.auth-card{display:none;}
+.auth-card.on{display:block;}
+.auth-mini{font-size:.8rem;color:var(--muted);}
+.auth-switch{font-size:.83rem;color:var(--muted);}
+.auth-switch button{background:none;border:none;color:var(--accent2);font-weight:700;padding:0;}
+.auth-help{font-size:.78rem;color:var(--muted);margin-top:12px;}
+.auth-token{font-family:'Syne',sans-serif;font-size:1rem;letter-spacing:.08em;background:var(--cream);padding:10px 12px;border-radius:10px;border:1px dashed var(--border);text-align:center;}
+.app-shell{display:none;}
+.app-shell.on{display:block;}
 @media(max-width:991.98px){
-#sb{transform:translateX(-100%);}#sb.open{transform:translateX(0);}#mw{margin-left:0!important;}}
+#sb{transform:translateX(-100%);}#sb.open{transform:translateX(0);}#mw{margin-left:0!important;}
+.auth-wrap{grid-template-columns:1fr;}}
 @media(max-width:575.98px){.ca{padding:10px;}.rw{padding:16px;}}
 </style>
 </head>
 <body>
+<div id="auth-shell" class="auth-shell">
+	<div class="auth-wrap">
+		<div class="auth-side">
+			<div>
+				<div class="logo" style="font-size:1.35rem">Nomina<em>RD</em></div>
+				<h1>Controla nomina, usuarios y acceso desde un solo lugar.</h1>
+				<p>Agregue acceso seguro al sistema con inicio de sesion, registro de usuarios y recuperacion de contrasena.</p>
+			</div>
+			<div class="auth-mark">
+				<div class="hl">
+					<div class="ff" style="font-size:.82rem;margin-bottom:4px">Acceso protegido</div>
+					<div class="auth-mini">Toda la API queda bloqueada hasta que el usuario inicie sesion.</div>
+				</div>
+				<div class="hl">
+					<div class="ff" style="font-size:.82rem;margin-bottom:4px">Recuperacion rapida</div>
+					<div class="auth-mini">El flujo de "forgot password" genera un token temporal para restablecer la clave.</div>
+				</div>
+			</div>
+		</div>
+		<div class="auth-panel">
+			<div id="auth-login" class="auth-card on">
+				<h3 class="ff mb-2">Iniciar sesion</h3>
+				<p class="auth-mini mb-4">Entre con su correo y contrasena para usar el sistema.</p>
+				<div class="row g-3">
+					<div class="col-12"><label class="form-label">Correo</label><input class="form-control" id="login-email" type="email" placeholder="admin@empresa.com"></div>
+					<div class="col-12"><label class="form-label">Contrasena</label><input class="form-control" id="login-password" type="password" placeholder="******"></div>
+					<div class="col-12 d-grid"><button class="bd justify-content-center" onclick="submitLogin()"><i class="bi bi-box-arrow-in-right"></i>Entrar</button></div>
+				</div>
+				<div class="auth-switch mt-3">No tienes cuenta? <button onclick="showAuth('register')">Crear usuario</button></div>
+				<div class="auth-switch mt-2">Olvidaste tu contrasena? <button onclick="showAuth('forgot')">Recuperarla</button></div>
+			</div>
+
+			<div id="auth-register" class="auth-card">
+				<h3 class="ff mb-2">Registrar usuario</h3>
+				<p class="auth-mini mb-4">Crea un nuevo acceso para el sistema.</p>
+				<div class="row g-3">
+					<div class="col-12"><label class="form-label">Nombre</label><input class="form-control" id="reg-name" placeholder="Nombre completo"></div>
+					<div class="col-12"><label class="form-label">Correo</label><input class="form-control" id="reg-email" type="email" placeholder="usuario@empresa.com"></div>
+					<div class="col-12"><label class="form-label">Contrasena</label><input class="form-control" id="reg-password" type="password" placeholder="Minimo 6 caracteres"></div>
+					<div class="col-12 d-grid"><button class="bd justify-content-center" onclick="submitRegister()"><i class="bi bi-person-plus"></i>Crear cuenta</button></div>
+				</div>
+				<div class="auth-switch mt-3">Ya tienes cuenta? <button onclick="showAuth('login')">Iniciar sesion</button></div>
+			</div>
+
+			<div id="auth-forgot" class="auth-card">
+				<h3 class="ff mb-2">Recuperar contrasena</h3>
+				<p class="auth-mini mb-4">Indica tu correo para generar un token de restablecimiento.</p>
+				<div class="row g-3">
+					<div class="col-12"><label class="form-label">Correo</label><input class="form-control" id="forgot-email" type="email" placeholder="usuario@empresa.com"></div>
+					<div class="col-12 d-grid"><button class="bd justify-content-center" onclick="submitForgot()"><i class="bi bi-key"></i>Generar token</button></div>
+				</div>
+				<div id="forgot-token-box" class="mt-3" style="display:none">
+					<div class="auth-help">Usa este token temporal en el siguiente formulario:</div>
+					<div class="auth-token mt-2" id="forgot-token"></div>
+				</div>
+				<div class="auth-switch mt-3">Ya tienes token? <button onclick="showAuth('reset')">Restablecer ahora</button></div>
+				<div class="auth-switch mt-2">Volver a entrar? <button onclick="showAuth('login')">Iniciar sesion</button></div>
+			</div>
+
+			<div id="auth-reset" class="auth-card">
+				<h3 class="ff mb-2">Restablecer contrasena</h3>
+				<p class="auth-mini mb-4">Introduce el correo, el token y la nueva contrasena.</p>
+				<div class="row g-3">
+					<div class="col-12"><label class="form-label">Correo</label><input class="form-control" id="reset-email" type="email" placeholder="usuario@empresa.com"></div>
+					<div class="col-12"><label class="form-label">Token</label><input class="form-control" id="reset-token" placeholder="Token de recuperacion"></div>
+					<div class="col-12"><label class="form-label">Nueva contrasena</label><input class="form-control" id="reset-password" type="password" placeholder="Minimo 6 caracteres"></div>
+					<div class="col-12 d-grid"><button class="bd justify-content-center" onclick="submitReset()"><i class="bi bi-shield-lock"></i>Guardar nueva contrasena</button></div>
+				</div>
+				<div class="auth-switch mt-3">Necesitas un token? <button onclick="showAuth('forgot')">Generarlo</button></div>
+				<div class="auth-switch mt-2">Volver? <button onclick="showAuth('login')">Iniciar sesion</button></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="app-shell" class="app-shell">
 <div id="ov" onclick="closeSb()"></div>
 
 <!-- SIDEBAR -->
@@ -157,7 +255,14 @@ h1,h2,h3,h4,h5,h6,.ff{font-family:'Syne',sans-serif;}
 		<button id="tog" onclick="toggleSb()"><i class="bi bi-list"></i></button>
 		<span id="ptitle">Dashboard</span>
 		<span class="d-none d-md-block" style="font-size:.73rem;color:var(--muted)" id="tdate"></span>
-		<div class="av">AD</div>
+		<div class="d-flex align-items-center gap-2">
+			<div class="text-end d-none d-md-block" style="line-height:1.05">
+				<div class="ff" style="font-size:.75rem" id="auth-name">Usuario</div>
+				<div style="font-size:.68rem;color:var(--muted)" id="auth-email"></div>
+			</div>
+			<div class="av" id="auth-avatar">US</div>
+			<button class="bg2" onclick="logout()" title="Cerrar sesion"><i class="bi bi-box-arrow-right"></i><span class="d-none d-md-inline">Salir</span></button>
+		</div>
 	</div>
 	<div class="ca">
 
@@ -307,6 +412,7 @@ h1,h2,h3,h4,h5,h6,.ff{font-family:'Syne',sans-serif;}
 
 	</div><!-- /ca -->
 </div><!-- /mw -->
+</div><!-- /app-shell -->
 
 <div id="toast-a"></div>
 
@@ -428,6 +534,7 @@ h1,h2,h3,h4,h5,h6,.ff{font-family:'Syne',sans-serif;}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+window.__AUTH_USER__ = {{ auth_user|tojson }};
 // ═══════════════════════════════════════════
 //  CORE UTILS
 // ═══════════════════════════════════════════
@@ -440,12 +547,42 @@ const today = () => new Date().toISOString().split('T')[0];
 let _depts=[], _cargos=[], _tipos=[], _emps=[], _periodos=[];
 let _descEmpId=null, _descFilter='';
 let _empPage=1, _empFilter='', _empAll=[];
+let _authUser = window.__AUTH_USER__ || null;
+
+function initials(name){
+	return (name||'US').split(' ').filter(Boolean).slice(0,2).map(x=>x[0].toUpperCase()).join('') || 'US';
+}
+
+function updateAuthUi(){
+	const logged = !!_authUser;
+	$('auth-shell').classList.toggle('on', !logged);
+	$('app-shell').classList.toggle('on', logged);
+	if(logged){
+		$('auth-name').textContent = _authUser.nombre || 'Usuario';
+		$('auth-email').textContent = _authUser.email || '';
+		$('auth-avatar').textContent = initials(_authUser.nombre);
+	}
+}
+
+function showAuth(view){
+	['login','register','forgot','reset'].forEach(v=>{
+		$(`auth-${v}`).classList.toggle('on', v===view);
+	});
+	if(view!=='forgot') $('forgot-token-box').style.display='none';
+}
+
+function setAuthUser(user){
+	_authUser = user || null;
+	updateAuthUi();
+	if(!_authUser) showAuth('login');
+}
 
 // ── API wrapper ──────────────────────────────────────
 async function api(path, opts={}){
 	const defaults = { headers:{'Content-Type':'application/json'} };
 	const res = await fetch(path, {...defaults,...opts});
 	const data = await res.json();
+	if(res.status===401 && !path.startsWith('/api/auth/')) setAuthUser(null);
 	if(!res.ok) throw new Error(data.error || 'Error del servidor');
 	return data;
 }
@@ -466,6 +603,69 @@ function confirm(msg, cb){
 function bsShow(id){ new bootstrap.Modal($(id)).show(); }
 function bsHide(id){ bootstrap.Modal.getInstance($(id))?.hide(); }
 
+async function submitLogin(){
+	try{
+		const data = await api('/api/auth/login',{
+			method:'POST',
+			body:JSON.stringify({email:$('login-email').value.trim(),password:$('login-password').value})
+		});
+		setAuthUser(data.user);
+		toast('Sesion iniciada');
+		await bootstrapApp();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+async function submitRegister(){
+	try{
+		const data = await api('/api/auth/register',{
+			method:'POST',
+			body:JSON.stringify({nombre:$('reg-name').value.trim(),email:$('reg-email').value.trim(),password:$('reg-password').value})
+		});
+		setAuthUser(data.user);
+		toast('Usuario creado correctamente');
+		await bootstrapApp();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+async function submitForgot(){
+	try{
+		const data = await api('/api/auth/forgot-password',{
+			method:'POST',
+			body:JSON.stringify({email:$('forgot-email').value.trim()})
+		});
+		toast(data.message || 'Token generado');
+		if(data.reset_token){
+			$('forgot-token').textContent = data.reset_token;
+			$('forgot-token-box').style.display = 'block';
+			$('reset-email').value = $('forgot-email').value.trim();
+			$('reset-token').value = data.reset_token;
+		}
+	}catch(ex){ toast(ex.message,false); }
+}
+
+async function submitReset(){
+	try{
+		const data = await api('/api/auth/reset-password',{
+			method:'POST',
+			body:JSON.stringify({
+				email:$('reset-email').value.trim(),
+				token:$('reset-token').value.trim(),
+				password:$('reset-password').value
+			})
+		});
+		toast(data.message || 'Contrasena actualizada');
+		showAuth('login');
+		$('login-email').value = $('reset-email').value.trim();
+	}catch(ex){ toast(ex.message,false); }
+}
+
+async function logout(){
+	try{
+		await api('/api/auth/logout',{method:'POST'});
+	}catch(_){}
+	setAuthUser(null);
+}
+
 function pillE(e){ const m={activo:'pg',inactivo:'pr',suspendido:'py'}; return `<span class="pill ${m[e]||'pm'}">${cap(e)}</span>`; }
 function pillP(e){ const m={abierto:'pg',procesado:'pb',cerrado:'pr'}; return `<span class="pill ${m[e]||'pm'}">${cap(e)}</span>`; }
 
@@ -484,6 +684,7 @@ function renderPages(ulId, pages, cur, cb){
 // ═══════════════════════════════════════════
 const TITLES={dashboard:'Dashboard',empleados:'Empleados',departamentos:'Departamentos',cargos:'Cargos',tipos:'Tipos de Deducción',descuentos:'Descuentos por Empleado',periodos:'Períodos',nomina:'Procesar Nómina',reportes:'Reportes'};
 let _sbOpen=false;
+const TAB_VIEW_MAP={nom:'nomina',rep:'reportes'};
 
 function toggleSb(){
 	const sb=$('sb'), ov=$('ov');
@@ -503,9 +704,38 @@ function nav(view, btn){
 }
 function navBtn(view){ document.querySelectorAll('.sl').forEach(b=>{ if(b.getAttribute('onclick')?.includes(`'${view}'`)) b.click(); }); }
 
+function clearNominaPane(id){
+	if(id==='proc'){
+		_nominaData=null;
+		$('np-lbl').textContent='';
+		$('nom-tb').innerHTML='';
+		$('t-bruto').textContent='—';
+		$('t-desc').textContent='—';
+		$('t-neto').textContent='—';
+	}
+	if(id==='hist') $('hist-tb').innerHTML='';
+	if(id==='rec'){ _reciboData=null; $('rec-out').innerHTML=''; }
+}
+
+function clearReportePane(id){
+	if(id==='res') $('rep-stats').innerHTML='';
+	if(id==='dept') $('rdept-tb').innerHTML='';
+	if(id==='emp') $('remp-tb').innerHTML='';
+}
+
 function swTab(pre, tab, btn){
-	document.querySelectorAll(`#vw-${pre} .tp`).forEach(p=>p.classList.remove('on'));
-	document.querySelectorAll(`#vw-${pre} .tb2`).forEach(b=>b.classList.remove('on'));
+	const view = TAB_VIEW_MAP[pre] || pre;
+	document.querySelectorAll(`#vw-${view} .tp`).forEach(p=>p.classList.remove('on'));
+	document.querySelectorAll(`#vw-${view} .tb2`).forEach(b=>b.classList.remove('on'));
+	if(pre==='nom'){
+		['proc','hist','rec'].filter(x=>x!==tab).forEach(clearNominaPane);
+		if(tab==='hist') renderHistorial();
+		if(tab==='rec' && !$('rec-out').innerHTML) $('rec-out').innerHTML='<div class="empty"><i class="bi bi-receipt"></i><p>Selecciona empleado y periodo para generar el recibo.</p></div>';
+	}
+	if(pre==='rep'){
+		['res','dept','emp'].filter(x=>x!==tab).forEach(clearReportePane);
+		renderReportes();
+	}
 	$(`${pre}-${tab}`)?.classList.add('on'); if(btn) btn.classList.add('on');
 }
 
@@ -955,6 +1185,8 @@ function irNomina(pid){ navBtn('nomina'); setTimeout(async()=>{ $('np').value=pi
 // ═══════════════════════════════════════════
 async function renderNominaPage(){
 	[_periodos,_depts]=await Promise.all([api('/api/periodos'),api('/api/departamentos')]);
+	clearNominaPane('proc');
+	clearNominaPane('rec');
 	const sp=$('np'); sp.innerHTML='<option value="">Seleccione período…</option>';
 	_periodos.forEach(p=>sp.innerHTML+=`<option value="${p.id}">${p.nombre}</option>`);
 	const abierto=_periodos.find(p=>p.estado==='abierto');
@@ -965,6 +1197,7 @@ async function renderNominaPage(){
 	const empsAll=await api('/api/empleados'); empsAll.forEach(e=>se.innerHTML+=`<option value="${e.id}">${e.nombres} ${e.apellidos}</option>`);
 	const srp=$('rp'); srp.innerHTML='<option value="">Seleccione…</option>';
 	_periodos.forEach(p=>srp.innerHTML+=`<option value="${p.id}">${p.nombre}</option>`);
+	$('rec-out').innerHTML='<div class="empty"><i class="bi bi-receipt"></i><p>Selecciona empleado y perÃ­odo para generar el recibo.</p></div>';
 	await renderHistorial();
 }
 
@@ -1104,18 +1337,25 @@ async function updBadges(){
 	}catch(_){}
 }
 
+async function bootstrapApp(){
+	$('tdate').textContent=new Date().toLocaleDateString('es-DO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+	[_depts,_cargos,_tipos]=await Promise.all([api('/api/departamentos'),api('/api/cargos'),api('/api/tipos-deduccion')]);
+	await updBadges();
+	await renderDash();
+}
+
 // ═══════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',async()=>{
-	$('tdate').textContent=new Date().toLocaleDateString('es-DO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+	updateAuthUi();
+	showAuth('login');
 	window.addEventListener('resize',()=>{ if(window.innerWidth>=992){ $('sb').classList.remove('open');$('ov').classList.remove('show'); } });
-	// Pre-load caches
-	try{
-		[_depts,_cargos,_tipos]=await Promise.all([api('/api/departamentos'),api('/api/cargos'),api('/api/tipos-deduccion')]);
-		await updBadges();
-		await renderDash();
-	}catch(ex){ toast('No se pudo conectar con el servidor: '+ex.message,false); }
+	if(_authUser){
+		try{
+			await bootstrapApp();
+		}catch(ex){ toast('No se pudo conectar con el servidor: '+ex.message,false); }
+	}
 });
 </script>
 </body>
